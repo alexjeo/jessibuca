@@ -3009,6 +3009,14 @@ https://blog.csdn.net/xyphf/article/details/105116223
 ### 在使用useMSE:true 硬解码的时候video出现大量的 waiting canplay 日志
 
 
+### chrome 浏览器的video标签抛出异常 Error Domain=NSOSStatusErrorDomain Code=-12909
+
+
+在 Chrome 浏览器中，NSOSStatusErrorDomain Code=-12909 的错误通常发生在 macOS 系统中，它指的是 kAudioFormatUnsupportedDataFormatError，即`音频或视频数据的格式不被支持`。
+
+> 一般是视频的分辨率太过特殊导致的，比如 32:9 的分辨率。
+
+
 
 ## 支持作者
 
