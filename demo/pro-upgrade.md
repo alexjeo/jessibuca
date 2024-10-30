@@ -13,9 +13,11 @@
 
 # 开源版 升级到 Pro 版本
 
-## 替换文件 （软解码+硬解码）
+## 替换文件
 
 > 只需要无脑的将`pro/js`下面的所有js和wasm文件替换到原本的开源版`js`目录下即可。
+
+[pro体验版zip包](https://jessibuca.com/pro.zip)
 
 需要将原本开源版的
 
@@ -24,49 +26,6 @@
 - decoder.wasm
 
 替换成 `pro/js`下面的所有js和wasm文件
-
-文件介绍
-
-- jessibuca-pro-demo.js 或 jessibuca-pro-multi-demo.js   // 主文件(需要通过script标签引入)
-
-- decoder-pro.js  //  worker解码器(这个库无需引入,播放器内部会自己引入)
-- decoder-pro.wasm // worker解码器胶水文件(这个库无需引入,播放器内部会自己引入)
-
-- decoder-pro-simd.js // worker-simd解码器(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-simd.wasm // worker-simd解码器胶水文件(这个库无需引入,播放器内部会自己引入)
-
-- decoder-pro-hard.js // worker硬解码解封装+audio解码(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-hard-not-wasm.hs // worker硬解码解封装(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-audio.js // worker音频解码器(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-audio.wasm // worker音频解码器胶水文件(这个库无需引入,播放器内部会自己引入)
-
-- decoder-pro-mt.js // worker多线程解码器(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-mt.wasm // worker多线程解码器胶水文件(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-mt-worker.js // worker多线程解码器(这个库无需引入,播放器内部会自己引入)
-
-- decoder-pro-simd-mt.jd // worker-simd多线程解码器(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-simd-mt.wasm // worker-simd多线程解码器胶水文件(这个库无需引入,播放器内部会自己引入)
-- decoder-pro-simd-mt-worker.js // worker-simd多线程解码器(这个库无需引入,播放器内部会自己引入)
-
-> 如果有多屏需求，可以将`jessibuca-pro.js`替换成`jessibuca-pro-multi.js`。
-
-> `jessibuca-pro.js` 与`jessibuca-pro-multi.js`只需要引用一个即可（不需要两个同时引用）。
-
-> `decoder-pro-simd.js`是simd解码器（适用于高分辨率解码）（） （）
-
-
-## 替换文件（只使用硬解码）
-
-需要将原本开源版的
-
-- jessibuca.js
-- decoder.js
-- decoder.wasm
-
-替换成
-
-- jessibuca-pro-demo.js 或 jessibuca-pro-multi-demo.js   // 主文件(需要通过script标签引入)
-- decoder-pro-hard-not-wasm.js // worker硬解码解封装(这个库无需引入,播放器内部会自己引入)
 
 
 ## js以及decoder的配置
@@ -96,9 +55,10 @@ const jessibuca = new Jessibuca({
 
 
 ```js
+// 替换成
 const jessibucaPro = new JessibucaPro({
     // ...
-    decoder:'your-path/decoder-pro.js'
+    decoder:'your-path/decoder-pro.js' // 配置decoder-pro.js pro 专用解码器
 })
 ```
 
