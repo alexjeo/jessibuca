@@ -451,13 +451,9 @@ export default class Player extends Emitter {
                 this.decoderWorker = new DecoderWorker(this);
                 this.debug.log('Player', 'waiting decoderWorker init');
                 this.once(EVENTS.decoderWorkerInit, () => {
-                    if (this.isDestroyedOrClosed()) {
-                        reject('init() failed and player is destroyed or closed');
-                    } else {
-                        this.debug.log('Player', 'decoderWorker init success');
-                        this.loaded = true;
-                        resolve()
-                    }
+                    this.debug.log('Player', 'decoderWorker init success');
+                    this.loaded = true;
+                    resolve()
                 })
             } else {
                 resolve()
