@@ -473,7 +473,7 @@ export default class Player extends Emitter {
             if (!url && !this._opt.url) {
                 return reject();
             }
-
+            this._closed = false;
             this.loading = true;
             this.playing = false;
             this._times.playInitStart = now();

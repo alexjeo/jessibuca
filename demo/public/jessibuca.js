@@ -14,8 +14,53 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof(o) {
+	  "@babel/helpers - typeof";
+
+	  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+	    return typeof o;
+	  } : function (o) {
+	    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+	  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
+	}
+	module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+	});
+
+	unwrapExports(_typeof_1);
+
+	var toPrimitive = createCommonjsModule(function (module) {
+	var _typeof = _typeof_1["default"];
+	function _toPrimitive(input, hint) {
+	  if (_typeof(input) !== "object" || input === null) return input;
+	  var prim = input[Symbol.toPrimitive];
+	  if (prim !== undefined) {
+	    var res = prim.call(input, hint || "default");
+	    if (_typeof(res) !== "object") return res;
+	    throw new TypeError("@@toPrimitive must return a primitive value.");
+	  }
+	  return (hint === "string" ? String : Number)(input);
+	}
+	module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+	});
+
+	unwrapExports(toPrimitive);
+
+	var toPropertyKey = createCommonjsModule(function (module) {
+	var _typeof = _typeof_1["default"];
+
+	function _toPropertyKey(arg) {
+	  var key = toPrimitive(arg, "string");
+	  return _typeof(key) === "symbol" ? key : String(key);
+	}
+	module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+	});
+
+	unwrapExports(toPropertyKey);
+
 	var defineProperty = createCommonjsModule(function (module) {
 	function _defineProperty(obj, key, value) {
+	  key = toPropertyKey(key);
 	  if (key in obj) {
 	    Object.defineProperty(obj, key, {
 	      value: value,
@@ -26,10 +71,8 @@
 	  } else {
 	    obj[key] = value;
 	  }
-
 	  return obj;
 	}
-
 	module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
 	});
 
@@ -50,8 +93,9 @@
 	  webm: 'webm'
 	};
 	const CONTAINER_DATA_SET_KEY = 'jessibuca';
-	const VERSION = '"3.2.12"'; // default player options
+	const VERSION = '"3.3.14"';
 
+	// default player options
 	const DEFAULT_PLAYER_OPTIONS = {
 	  videoBuffer: 1000,
 	  //1000ms  1 second
@@ -138,8 +182,8 @@
 	  loadingDecoderWorkerTimeout: 10,
 	  //
 	  autoUseSystemFullScreen: true // auto system full screen
-
 	};
+
 	const WORKER_CMD_TYPE = {
 	  init: 'init',
 	  initVideo: 'initVideo',
@@ -153,9 +197,10 @@
 	  wasmError: 'wasmError'
 	};
 	const WASM_ERROR = {
-	  invalidNalUnitSize: 'Invalid NAL unit size' // errorSplittingTheInputIntoNALUnits: 'Error splitting the input into NAL units'
-
+	  invalidNalUnitSize: 'Invalid NAL unit size'
+	  // errorSplittingTheInputIntoNALUnits: 'Error splitting the input into NAL units'
 	};
+
 	const MEDIA_TYPE = {
 	  audio: 1,
 	  video: 2
@@ -171,8 +216,9 @@
 	  videoDecode: 'videoDecode',
 	  close: 'close',
 	  updateConfig: 'updateConfig'
-	}; //
+	};
 
+	//
 	const EVENTS = {
 	  fullscreen: 'fullscreen$2',
 	  webFullscreen: 'webFullscreen',
@@ -264,7 +310,8 @@
 	  mediaSourceAppendBufferEndTimeout: 'mediaSourceAppendBufferEndTimeout',
 	  wasmDecodeError: 'wasmDecodeError',
 	  webglAlignmentError: 'webglAlignmentError',
-	  webglContextLostError: 'webglContextLostError'
+	  webglContextLostError: 'webglContextLostError',
+	  webglInitError: 'webglInitError'
 	};
 	const WEBSOCKET_STATUS = {
 	  notConnect: 'notConnect',
@@ -281,8 +328,8 @@
 	  7: 'H264(AVC)',
 	  //
 	  12: 'H265(HEVC)' //
-
 	};
+
 	const VIDEO_ENC_CODE = {
 	  h264: 7,
 	  h265: 12
@@ -299,8 +346,8 @@
 	  auto: 1,
 	  // 视频画面做等比缩放后,高或宽对齐canvas区域,画面不被拉伸,但有黑边
 	  fullAuto: 2 // 视频画面做等比缩放后,完全填充canvas区域,画面不被拉伸,没有黑边,但画面显示不全
-
 	};
+
 	const CANVAS_RENDER_TYPE = {
 	  webcodecs: 'webcodecs',
 	  webgl: 'webgl',
@@ -318,7 +365,7 @@
 	  ended: 'ended',
 	  open: 'open',
 	  closed: 'closed'
-	}; // frag duration
+	};
 	const AUDIO_SYNC_VIDEO_DIFF = 1000;
 	const HOT_KEY = {
 	  esc: 27,
@@ -326,8 +373,8 @@
 	  arrowUp: 38,
 	  //
 	  arrowDown: 40 //
-
 	};
+
 	const WCS_ERROR = {
 	  keyframeIsRequiredError: 'A key frame is required after configure() or flush()',
 	  canNotDecodeClosedCodec: "Cannot call 'decode' on a closed codec"
@@ -350,35 +397,20 @@
 
 	class Debug {
 	  constructor(master) {
-	    this.log = function (name) {
+	    this.log = (name, ...args) => {
 	      if (master._opt && master._opt.debug) {
-	        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	          args[_key - 1] = arguments[_key];
-	        }
-
 	        console.log(`Jb: [${name}]`, ...args);
 	      }
 	    };
-
-	    this.warn = function (name) {
+	    this.warn = (name, ...args) => {
 	      if (master._opt && master._opt.debug) {
-	        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	          args[_key2 - 1] = arguments[_key2];
-	        }
-
 	        console.warn(`Jb: [${name}]`, ...args);
 	      }
 	    };
-
-	    this.error = function (name) {
-	      for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-	        args[_key3 - 1] = arguments[_key3];
-	      }
-
+	    this.error = (name, ...args) => {
 	      console.error(`Jb: [${name}]`, ...args);
 	    };
 	  }
-
 	}
 
 	class Events {
@@ -387,31 +419,22 @@
 	    this.proxy = this.proxy.bind(this);
 	    this.master = master;
 	  }
-
-	  proxy(target, name, callback) {
-	    let option = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
+	  proxy(target, name, callback, option = {}) {
 	    if (!target) {
 	      return;
 	    }
-
 	    if (Array.isArray(name)) {
 	      return name.map(item => this.proxy(target, item, callback, option));
 	    }
-
 	    target.addEventListener(name, callback, option);
-
 	    const destroy = () => target.removeEventListener(name, callback, option);
-
 	    this.destroys.push(destroy);
 	    return destroy;
 	  }
-
 	  destroy() {
 	    this.master.debug && this.master.debug.log(`Events`, 'destroy');
 	    this.destroys.forEach(event => event());
 	  }
-
 	}
 
 	var property$1 = (player => {
@@ -630,10 +653,8 @@
 	  let gl = null;
 	  const validContextNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
 	  let nameIndex = 0;
-
 	  while (!gl && nameIndex < validContextNames.length) {
 	    const contextName = validContextNames[nameIndex];
-
 	    try {
 	      let contextOptions = {
 	        preserveDrawingBuffer: true
@@ -642,28 +663,22 @@
 	    } catch (e) {
 	      gl = null;
 	    }
-
 	    if (!gl || typeof gl.getParameter !== "function") {
 	      gl = null;
 	    }
-
 	    ++nameIndex;
 	  }
-
 	  return gl;
 	}
-	function dataURLToFile() {
-	  let dataURL = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	function dataURLToFile(dataURL = '') {
 	  const arr = dataURL.split(",");
 	  const bstr = atob(arr[1]);
 	  const type = arr[0].replace("data:", "").replace(";base64", "");
 	  let n = bstr.length,
-	      u8arr = new Uint8Array(n);
-
+	    u8arr = new Uint8Array(n);
 	  while (n--) {
 	    u8arr[n] = bstr.charCodeAt(n);
 	  }
-
 	  return new File([u8arr], 'file', {
 	    type
 	  });
@@ -678,7 +693,6 @@
 	      if (module instanceof WebAssembly.Module) return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
 	    }
 	  } catch (e) {}
-
 	  return false;
 	})();
 	function clamp(num, a, b) {
@@ -688,23 +702,18 @@
 	  if (!element) {
 	    return;
 	  }
-
 	  if (typeof key === 'object') {
 	    Object.keys(key).forEach(item => {
 	      setStyle(element, item, key[item]);
 	    });
 	  }
-
 	  element.style[key] = value;
 	  return element;
 	}
-	function getStyle(element, key) {
-	  let numberType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
+	function getStyle(element, key, numberType = true) {
 	  if (!element) {
 	    return 0;
 	  }
-
 	  const value = getComputedStyle(element, null).getPropertyValue(key);
 	  return numberType ? parseFloat(value) : value;
 	}
@@ -712,7 +721,6 @@
 	  if (performance && typeof performance.now === 'function') {
 	    return performance.now();
 	  }
-
 	  return Date.now();
 	}
 	function calculationRate(callback) {
@@ -722,7 +730,6 @@
 	    totalSize += size;
 	    const thisTime = getNowTime();
 	    const diffTime = thisTime - lastTime;
-
 	    if (diffTime >= 1000) {
 	      callback(totalSize / diffTime * 1000);
 	      lastTime = thisTime;
@@ -741,30 +748,27 @@
 	  return /android/i.test(UA);
 	}
 
+	// 是否支持 webcodecs
 	function supportWCS() {
 	  return "VideoEncoder" in window;
 	}
 	function uuid16() {
 	  return 'xxxxxxxxxxxx4xxx'.replace(/[xy]/g, function (c) {
 	    var r = Math.random() * 16 | 0,
-	        v = c == 'x' ? r : r & 0x3 | 0x8;
+	      v = c == 'x' ? r : r & 0x3 | 0x8;
 	    return v.toString(16);
 	  });
 	}
 	function formatVideoDecoderConfigure(avcC) {
 	  let codecArray = avcC.subarray(1, 4);
 	  let codecString = "avc1.";
-
 	  for (let j = 0; j < 3; j++) {
 	    let h = codecArray[j].toString(16);
-
 	    if (h.length < 2) {
 	      h = "0" + h;
 	    }
-
 	    codecString += h;
 	  }
-
 	  return {
 	    codec: codecString,
 	    description: avcC
@@ -777,20 +781,17 @@
 	  if (null == value || value === '' || parseInt(value) === 0 || isNaN(parseInt(value))) {
 	    return "0KB/s";
 	  }
-
 	  let size = parseFloat(value);
 	  size = size.toFixed(2);
 	  return size + 'KB/s';
 	}
 	function fpsStatus(fps) {
 	  let result = 0;
-
 	  if (fps >= 24) {
 	    result = 2;
 	  } else if (fps >= 15) {
 	    result = 1;
 	  }
-
 	  return result;
 	}
 	function createEmptyImageBitmap(width, height) {
@@ -843,37 +844,31 @@
 	    videoTimestamp: '',
 	    // videoStart - decodeStart
 	    allTimestamp: '' // videoStart - playInitStart
-
 	  };
-	} // create watermark
+	}
 	function formatTimeTips(time) {
-	  var result; //
+	  var result;
 
+	  //
 	  if (time > -1) {
 	    var hour = Math.floor(time / 3600);
 	    var min = Math.floor(time / 60) % 60;
 	    var sec = time % 60;
 	    sec = Math.round(sec);
-
 	    if (hour < 10) {
 	      result = '0' + hour + ":";
 	    } else {
 	      result = hour + ":";
 	    }
-
 	    if (min < 10) {
 	      result += "0";
 	    }
-
 	    result += min + ":";
-
 	    if (sec < 10) {
 	      result += "0";
 	    }
-
 	    result += sec.toFixed(0);
 	  }
-
 	  return result;
 	}
 	function getTarget(e) {
@@ -903,13 +898,11 @@
 	    QQBrowser: /qqbrowser/.test(UserAgent),
 	    // qq浏览器
 	    WeixinBrowser: /MicroMessenger/i.test(UserAgent) // 微信浏览器
-
-	  }; // console.log(browserArray)
-
+	  };
+	  // console.log(browserArray)
 	  for (let i in browserArray) {
 	    if (browserArray[i]) {
 	      let versions = '';
-
 	      if (i === 'IE') {
 	        versions = UserAgent.match(/(msie\s|trident.*rv:)([\w.]+)/)[2];
 	      } else if (i === 'Chrome') {
@@ -919,7 +912,6 @@
 	            i = '360';
 	          }
 	        }
-
 	        versions = UserAgent.match(/chrome\/([\d.]+)/)[1];
 	      } else if (i === 'Firefox') {
 	        versions = UserAgent.match(/firefox\/([\d.]+)/)[1];
@@ -932,12 +924,10 @@
 	      } else if (i === 'QQBrowser') {
 	        versions = UserAgent.match(/qqbrowser\/([\d.]+)/)[1];
 	      }
-
 	      browserInfo.type = i;
 	      browserInfo.version = parseInt(versions);
 	    }
 	  }
-
 	  return browserInfo;
 	}
 	function closeVideoFrame(videoFrame) {
@@ -949,29 +939,25 @@
 	}
 	function removeElement(element) {
 	  let result = false;
-
 	  if (element) {
 	    if (element.parentNode) {
 	      element.parentNode.removeChild(element);
 	      result = true;
 	    }
 	  }
-
 	  return result;
 	}
 	function hevcEncoderNalePacketNotLength(oneNALBuffer, isIframe) {
 	  const idrBit = 0x10 | 12;
 	  const nIdrBit = 0x20 | 12;
 	  let tmp = [];
-
 	  if (isIframe) {
 	    tmp[0] = idrBit;
 	  } else {
 	    tmp[0] = nIdrBit;
 	  }
-
-	  tmp[1] = 1; //
-
+	  tmp[1] = 1;
+	  //
 	  tmp[2] = 0;
 	  tmp[3] = 0;
 	  tmp[4] = 0;
@@ -987,18 +973,15 @@
 	  if (!element) {
 	    return '';
 	  }
-
 	  if (element.dataset) {
 	    return element.dataset[key];
 	  }
-
 	  return element.getAttribute('data-' + key);
 	}
 	function setElementDataset(element, key, value) {
 	  if (!element) {
 	    return;
 	  }
-
 	  if (element.dataset) {
 	    element.dataset[key] = value;
 	  } else {
@@ -1009,7 +992,6 @@
 	  if (!element) {
 	    return;
 	  }
-
 	  if (element.dataset) {
 	    delete element.dataset[key];
 	  } else {
@@ -1021,8 +1003,9 @@
 	  try {
 	    const screenfullChange = e => {
 	      if (getTarget(e) === player.$container) {
-	        player.emit(JESSIBUCA_EVENTS.fullscreen, player.fullscreen); // 如果不是fullscreen,则触发下 resize 方法
+	        player.emit(JESSIBUCA_EVENTS.fullscreen, player.fullscreen);
 
+	        // 如果不是fullscreen,则触发下 resize 方法
 	        if (!player.fullscreen) {
 	          player.resize();
 	        } else {
@@ -1032,24 +1015,25 @@
 	        }
 	      }
 	    };
-
 	    screenfull.on('change', screenfullChange);
 	    player.events.destroys.push(() => {
 	      screenfull.off('change', screenfullChange);
 	    });
-	  } catch (error) {//
-	  } //
-
-
+	  } catch (error) {
+	    //
+	  }
+	  //
 	  player.on(EVENTS.decoderWorkerInit, () => {
 	    player.debug.log('player', 'has loaded');
 	    player.loaded = true;
-	  }); //
+	  });
 
+	  //
 	  player.on(EVENTS.play, () => {
 	    player.loading = false;
-	  }); //
+	  });
 
+	  //
 	  player.on(EVENTS.fullscreen, value => {
 	    if (value) {
 	      try {
@@ -1077,25 +1061,22 @@
 	      }
 	    }
 	  });
-
 	  if (isMobile()) {
 	    player.on(EVENTS.webFullscreen, value => {
 	      if (value) {
 	        player.$container.classList.add('jessibuca-fullscreen-web');
 	      } else {
 	        player.$container.classList.remove('jessibuca-fullscreen-web');
-	      } //
-
-
+	      }
+	      //
 	      player.emit(JESSIBUCA_EVENTS.fullscreen, player.fullscreen);
 	    });
-	  } //
+	  }
 
-
+	  //
 	  player.on(EVENTS.resize, () => {
 	    player.video && player.video.resize();
 	  });
-
 	  if (player._opt.debug) {
 	    const ignoreList = [EVENTS.timeUpdate];
 	    const stringList = [EVENTS.stats, EVENTS.playToRenderTimes, EVENTS.audioInfo, EVENTS.videoInfo];
@@ -1104,11 +1085,9 @@
 	        if (ignoreList.includes(key)) {
 	          return;
 	        }
-
 	        if (stringList.includes(key)) {
 	          value = JSON.stringify(value);
 	        }
-
 	        player.debug.log('player events', EVENTS[key], value);
 	      });
 	    });
@@ -1129,41 +1108,24 @@
 	    });
 	    return this;
 	  }
-
 	  once(name, fn, ctx) {
 	    const self = this;
-
-	    function listener() {
+	    function listener(...args) {
 	      self.off(name, listener);
-
-	      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	      }
-
 	      fn.apply(ctx, args);
 	    }
-
 	    listener._ = fn;
 	    return this.on(name, listener, ctx);
 	  }
-
-	  emit(name) {
+	  emit(name, ...data) {
 	    const evtArr = ((this.e || (this.e = {}))[name] || []).slice();
-
-	    for (var _len2 = arguments.length, data = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	      data[_key2 - 1] = arguments[_key2];
-	    }
-
 	    for (let i = 0; i < evtArr.length; i += 1) {
 	      evtArr[i].fn.apply(evtArr[i].ctx, data);
 	    }
-
 	    return this;
 	  }
-
 	  off(name, callback) {
 	    const e = this.e || (this.e = {});
-
 	    if (!name) {
 	      Object.keys(e).forEach(key => {
 	        delete e[key];
@@ -1171,62 +1133,50 @@
 	      delete this.e;
 	      return;
 	    }
-
 	    const evts = e[name];
 	    const liveEvents = [];
-
 	    if (evts && callback) {
 	      for (let i = 0, len = evts.length; i < len; i += 1) {
 	        if (evts[i].fn !== callback && evts[i].fn._ !== callback) liveEvents.push(evts[i]);
 	      }
 	    }
-
 	    if (liveEvents.length) {
 	      e[name] = liveEvents;
 	    } else {
 	      delete e[name];
 	    }
-
 	    return this;
 	  }
-
 	}
 
 	var createWebGL = ((gl, openWebglAlignment) => {
 	  var vertexShaderScript = ['attribute vec4 vertexPos;', 'attribute vec4 texturePos;', 'varying vec2 textureCoord;', 'void main()', '{', 'gl_Position = vertexPos;', 'textureCoord = texturePos.xy;', '}'].join('\n');
 	  var fragmentShaderScript = ['precision highp float;', 'varying highp vec2 textureCoord;', 'uniform sampler2D ySampler;', 'uniform sampler2D uSampler;', 'uniform sampler2D vSampler;', 'const mat4 YUV2RGB = mat4', '(', '1.1643828125, 0, 1.59602734375, -.87078515625,', '1.1643828125, -.39176171875, -.81296875, .52959375,', '1.1643828125, 2.017234375, 0, -1.081390625,', '0, 0, 0, 1', ');', 'void main(void) {', 'highp float y = texture2D(ySampler,  textureCoord).r;', 'highp float u = texture2D(uSampler,  textureCoord).r;', 'highp float v = texture2D(vSampler,  textureCoord).r;', 'gl_FragColor = vec4(y, u, v, 1) * YUV2RGB;', '}'].join('\n');
-
 	  if (openWebglAlignment) {
 	    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 	  }
-
 	  var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	  gl.shaderSource(vertexShader, vertexShaderScript);
 	  gl.compileShader(vertexShader);
-
 	  if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
 	    console.log('Vertex shader failed to compile: ' + gl.getShaderInfoLog(vertexShader));
 	  }
-
 	  var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 	  gl.shaderSource(fragmentShader, fragmentShaderScript);
 	  gl.compileShader(fragmentShader);
-
 	  if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
 	    console.log('Fragment shader failed to compile: ' + gl.getShaderInfoLog(fragmentShader));
 	  }
-
 	  var program = gl.createProgram();
 	  gl.attachShader(program, vertexShader);
 	  gl.attachShader(program, fragmentShader);
 	  gl.linkProgram(program);
-
 	  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 	    console.log('Program failed to compile: ' + gl.getProgramInfoLog(program));
 	  }
+	  gl.useProgram(program);
 
-	  gl.useProgram(program); // initBuffers
-
+	  // initBuffers
 	  var vertexPosBuffer = gl.createBuffer();
 	  gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
 	  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([1, 1, -1, 1, 1, -1, -1, -1]), gl.STATIC_DRAW);
@@ -1239,7 +1189,6 @@
 	  var texturePosRef = gl.getAttribLocation(program, 'texturePos');
 	  gl.enableVertexAttribArray(texturePosRef);
 	  gl.vertexAttribPointer(texturePosRef, 2, gl.FLOAT, false, 0, 0);
-
 	  function _initTexture(name, index) {
 	    var textureRef = gl.createTexture();
 	    gl.bindTexture(gl.TEXTURE_2D, textureRef);
@@ -1251,13 +1200,9 @@
 	    gl.uniform1i(gl.getUniformLocation(program, name), index);
 	    return textureRef;
 	  }
-
 	  var yTextureRef = _initTexture('ySampler', 0);
-
 	  var uTextureRef = _initTexture('uSampler', 1);
-
 	  var vTextureRef = _initTexture('vSampler', 2);
-
 	  return {
 	    render: function (w, h, y, u, v) {
 	      gl.viewport(0, 0, w, h);
@@ -1280,7 +1225,8 @@
 	        gl.deleteTexture(yTextureRef);
 	        gl.deleteTexture(uTextureRef);
 	        gl.deleteTexture(vTextureRef);
-	      } catch (e) {// console.error(e);
+	      } catch (e) {
+	        // console.error(e);
 	      }
 	    }
 	  };
@@ -1291,7 +1237,6 @@
 	    super();
 	    this.init = false;
 	  }
-
 	  resetInit() {
 	    this.init = false;
 	    this.videoInfo = {
@@ -1301,41 +1246,34 @@
 	      encTypeCode: ''
 	    };
 	  }
-
 	  destroy() {
 	    this.resetInit();
 	    this.player.$container.removeChild(this.$videoElement);
 	    this.off();
-	  } //
+	  }
 
-
+	  //
 	  updateVideoInfo(data) {
 	    if (data.encTypeCode) {
 	      this.videoInfo.encType = VIDEO_ENC_TYPE[data.encTypeCode];
 	      this.videoInfo.encTypeCode = data.encTypeCode;
 	    }
-
 	    if (data.width) {
 	      this.videoInfo.width = data.width;
 	    }
-
 	    if (data.height) {
 	      this.videoInfo.height = data.height;
-	    } // video 基本信息
+	    }
 
-
+	    // video 基本信息
 	    if (this.videoInfo.encType && this.videoInfo.height && this.videoInfo.width && !this.init) {
 	      this.player.emit(EVENTS.videoInfo, this.videoInfo);
 	      this.init = true;
 	    }
 	  }
-
 	  play() {}
-
 	  pause() {}
-
 	  clearView() {}
-
 	}
 
 	/*
@@ -1347,10 +1285,10 @@
 	* License : https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md (MIT)
 	* source  : http://purl.eligrey.com/github/FileSaver.js
 	*/
+
 	// The one and only way of getting global scope in all environments
 	// https://stackoverflow.com/q/3277182/1008999
 	var _global = typeof window === 'object' && window.window === window ? window : typeof self === 'object' && self.self === self ? self : typeof global === 'object' && global.global === global ? global : undefined;
-
 	function bom(blob, opts) {
 	  if (typeof opts === 'undefined') opts = {
 	    autoBom: false
@@ -1359,47 +1297,40 @@
 	    opts = {
 	      autoBom: !opts
 	    };
-	  } // prepend BOM for UTF-8 XML and text/* types (including HTML)
-	  // note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
+	  }
 
+	  // prepend BOM for UTF-8 XML and text/* types (including HTML)
+	  // note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
 	  if (opts.autoBom && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
 	    return new Blob([String.fromCharCode(0xFEFF), blob], {
 	      type: blob.type
 	    });
 	  }
-
 	  return blob;
 	}
-
 	function download(url, name, opts) {
 	  var xhr = new XMLHttpRequest();
 	  xhr.open('GET', url);
 	  xhr.responseType = 'blob';
-
 	  xhr.onload = function () {
 	    saveAs(xhr.response, name, opts);
 	  };
-
 	  xhr.onerror = function () {
 	    console.error('could not download file');
 	  };
-
 	  xhr.send();
 	}
-
 	function corsEnabled(url) {
-	  var xhr = new XMLHttpRequest(); // use sync to avoid popup blocker
-
+	  var xhr = new XMLHttpRequest();
+	  // use sync to avoid popup blocker
 	  xhr.open('HEAD', url, false);
-
 	  try {
 	    xhr.send();
 	  } catch (e) {}
-
 	  return xhr.status >= 200 && xhr.status <= 299;
-	} // `a.click()` doesn't work for all browsers (#465)
+	}
 
-
+	// `a.click()` doesn't work for all browsers (#465)
 	function click(node) {
 	  try {
 	    node.dispatchEvent(new MouseEvent('click'));
@@ -1408,30 +1339,32 @@
 	    evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
 	    node.dispatchEvent(evt);
 	  }
-	} // Detect WebView inside a native macOS app by ruling out all browsers
+	}
+
+	// Detect WebView inside a native macOS app by ruling out all browsers
 	// We just need to check for 'Safari' because all other browsers (besides Firefox) include that too
 	// https://www.whatismybrowser.com/guides/the-latest-user-agent/macos
-
-
 	var isMacOSWebView = _global.navigator && /Macintosh/.test(navigator.userAgent) && /AppleWebKit/.test(navigator.userAgent) && !/Safari/.test(navigator.userAgent);
-	var saveAs = // probably in some web worker
-	typeof window !== 'object' || window !== _global ? function saveAs() {
-	  /* noop */
-	} // Use download attribute first if possible (#193 Lumia mobile) unless this is a macOS WebView
-	: 'download' in HTMLAnchorElement.prototype && !isMacOSWebView ? function saveAs(blob, name, opts) {
-	  var URL = _global.URL || _global.webkitURL; // Namespace is used to prevent conflict w/ Chrome Poper Blocker extension (Issue #561)
+	var saveAs =
+	// probably in some web worker
+	typeof window !== 'object' || window !== _global ? function saveAs() {/* noop */
+	}
 
+	// Use download attribute first if possible (#193 Lumia mobile) unless this is a macOS WebView
+	: 'download' in HTMLAnchorElement.prototype && !isMacOSWebView ? function saveAs(blob, name, opts) {
+	  var URL = _global.URL || _global.webkitURL;
+	  // Namespace is used to prevent conflict w/ Chrome Poper Blocker extension (Issue #561)
 	  var a = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
 	  name = name || blob.name || 'download';
 	  a.download = name;
 	  a.rel = 'noopener'; // tabnabbing
+
 	  // TODO: detect chrome extensions & packaged apps
 	  // a.target = '_blank'
 
 	  if (typeof blob === 'string') {
 	    // Support regular links
 	    a.href = blob;
-
 	    if (a.origin !== location.origin) {
 	      corsEnabled(a.href) ? download(blob, name, opts) : click(a, a.target = '_blank');
 	    } else {
@@ -1443,15 +1376,15 @@
 	    setTimeout(function () {
 	      URL.revokeObjectURL(a.href);
 	    }, 4E4); // 40s
-
 	    setTimeout(function () {
 	      click(a);
 	    }, 0);
 	  }
-	} // Use msSaveOrOpenBlob as a second approach
+	}
+
+	// Use msSaveOrOpenBlob as a second approach
 	: 'msSaveOrOpenBlob' in navigator ? function saveAs(blob, name, opts) {
 	  name = name || blob.name || 'download';
-
 	  if (typeof blob === 'string') {
 	    if (corsEnabled(blob)) {
 	      download(blob, name, opts);
@@ -1466,27 +1399,23 @@
 	  } else {
 	    navigator.msSaveOrOpenBlob(bom(blob, opts), name);
 	  }
-	} // Fallback to using FileReader and a popup
+	}
+
+	// Fallback to using FileReader and a popup
 	: function saveAs(blob, name, opts, popup) {
 	  // Open a popup immediately do go around popup blocker
 	  // Mostly only available on user interaction and the fileReader is async so...
 	  popup = popup || open('', '_blank');
-
 	  if (popup) {
 	    popup.document.title = popup.document.body.innerText = 'downloading...';
 	  }
-
 	  if (typeof blob === 'string') return download(blob, name, opts);
 	  var force = blob.type === 'application/octet-stream';
-
 	  var isSafari = /constructor/i.test(_global.HTMLElement) || _global.safari;
-
 	  var isChromeIOS = /CriOS\/[\d]+/.test(navigator.userAgent);
-
 	  if ((isChromeIOS || force && isSafari || isMacOSWebView) && typeof FileReader !== 'undefined') {
 	    // Safari doesn't allow downloading of blob URLs
 	    var reader = new FileReader();
-
 	    reader.onloadend = function () {
 	      var url = reader.result;
 	      url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, 'data:attachment/file;');
@@ -1500,7 +1429,6 @@
 	    var url = URL.createObjectURL(blob);
 	    if (popup) popup.location = url;else location.href = url;
 	    popup = null; // reverse-tabnabbing #460
-
 	    setTimeout(function () {
 	      URL.revokeObjectURL(url);
 	    }, 4E4); // 40s
@@ -1528,111 +1456,92 @@
 	      width: '',
 	      height: '',
 	      encType: ''
-	    }; //
-
+	    };
+	    //
 	    this._initCanvasRender();
-
 	    this.player.debug.log('CanvasVideo', 'init');
 	  }
-
 	  async destroy() {
 	    super.destroy();
-
 	    if (this.contextGl) {
 	      this.contextGl = null;
 	    }
-
 	    if (this.context2D) {
 	      this.context2D = null;
 	    }
-
 	    if (this.contextGlRender) {
 	      this.contextGlDestroy && this.contextGlDestroy();
 	      this.contextGlDestroy = null;
 	      this.contextGlRender = null;
 	    }
-
 	    if (this.bitmaprenderer) {
 	      this.bitmaprenderer = null;
 	    }
-
 	    this.renderType = null;
 	    this.isContextGlRenderLost = false;
 	    this.player.debug.log(`CanvasVideoLoader`, 'destroy');
 	  }
-
 	  _initContextGl() {
 	    this.contextGl = createContextGL(this.$videoElement);
-
 	    if (this.contextGl) {
 	      const webgl = createWebGL(this.contextGl, this.player._opt.openWebglAlignment);
 	      this.contextGlRender = webgl.render;
 	      this.contextGlDestroy = webgl.destroy;
 	    } else {
 	      this.player.debug.error(`CanvasVideoLoader`, 'init webgl fail');
+	      this.player.emitError(EVENTS_ERROR.webglInitError);
 	    }
 	  }
-
 	  _initContext2D() {
 	    this.context2D = this.$videoElement.getContext('2d');
-	  } // 渲染类型
+	  }
 
-
+	  // 渲染类型
 	  _initCanvasRender() {
 	    if (this.player._opt.useWCS && !this._supportOffscreen()) {
 	      this.renderType = CANVAS_RENDER_TYPE.webcodecs;
-
 	      this._initContext2D();
 	    } else if (this._supportOffscreen()) {
 	      this.renderType = CANVAS_RENDER_TYPE.offscreen;
-
 	      this._bindOffscreen();
 	    } else {
 	      this.renderType = CANVAS_RENDER_TYPE.webgl;
-
 	      this._initContextGl();
 	    }
 	  }
-
 	  _supportOffscreen() {
 	    return supportOffscreen(this.$videoElement) && this.player._opt.useOffscreen;
-	  } //
+	  }
 
-
+	  //
 	  _bindOffscreen() {
 	    this.bitmaprenderer = this.$videoElement.getContext('bitmaprenderer');
 	  }
-
 	  initCanvasViewSize() {
 	    this.$videoElement.width = this.videoInfo.width;
 	    this.$videoElement.height = this.videoInfo.height;
 	    this.resize();
-	  } //
+	  }
 
-
+	  //
 	  render(msg) {
 	    this.player.videoTimestamp = msg.ts;
-
 	    switch (this.renderType) {
 	      case CANVAS_RENDER_TYPE.offscreen:
 	        this.bitmaprenderer.transferFromImageBitmap(msg.buffer);
 	        break;
-
 	      case CANVAS_RENDER_TYPE.webgl:
 	        if (this.isContextGlRenderLost) {
 	          return;
 	        }
-
 	        try {
 	          this.contextGlRender(this.$videoElement.width, this.$videoElement.height, msg.output[0], msg.output[1], msg.output[2]);
 	        } catch (e) {
-	          this.player.debug.error('CanvasVideoLoader', 'render', e);
+	          this.player.debug.error('CanvasVideoLoader', 'webgl render error and emit webglContextLostError', e);
 	          this.isContextGlRenderLost = true;
 	          this.player.emitError(EVENTS_ERROR.webglContextLostError);
 	        }
-
 	        break;
-
 	      case CANVAS_RENDER_TYPE.webcodecs:
 	        // can use  createImageBitmap in wexin
 	        this.context2D.drawImage(msg.videoFrame, 0, 0, this.$videoElement.width, this.$videoElement.height);
@@ -1640,7 +1549,6 @@
 	        break;
 	    }
 	  }
-
 	  screenshot(filename, format, quality, type) {
 	    filename = filename || now();
 	    type = type || SCREENSHOT_TYPE.download;
@@ -1650,29 +1558,23 @@
 	      webp: 'image/webp'
 	    };
 	    let encoderOptions = 0.92;
-
 	    if (!formatType[format] && SCREENSHOT_TYPE[format]) {
 	      type = format;
 	      format = 'png';
 	      quality = undefined;
 	    }
-
 	    if (typeof quality === "string") {
 	      type = quality;
 	      quality = undefined;
 	    }
-
 	    if (typeof quality !== 'undefined') {
 	      encoderOptions = Number(quality);
 	    }
-
 	    const dataURL = this.$videoElement.toDataURL(formatType[format] || formatType.png, encoderOptions);
-
 	    if (type === SCREENSHOT_TYPE.base64) {
 	      return dataURL;
 	    } else {
 	      const file = dataURLToFile(dataURL);
-
 	      if (type === SCREENSHOT_TYPE.blob) {
 	        return file;
 	      } else if (type === SCREENSHOT_TYPE.download) {
@@ -1680,9 +1582,9 @@
 	        saveAs(file, filename);
 	      }
 	    }
-	  } //
+	  }
 
-
+	  //
 	  clearView() {
 	    switch (this.renderType) {
 	      case CANVAS_RENDER_TYPE.offscreen:
@@ -1690,23 +1592,19 @@
 	          this.bitmaprenderer.transferFromImageBitmap(imageBitMap);
 	        });
 	        break;
-
 	      case CANVAS_RENDER_TYPE.webgl:
 	        this.contextGl.clear(this.contextGl.COLOR_BUFFER_BIT);
 	        break;
-
 	      case CANVAS_RENDER_TYPE.webcodecs:
 	        this.context2D.clearRect(0, 0, this.$videoElement.width, this.$videoElement.height);
 	        break;
 	    }
 	  }
-
 	  resize() {
 	    this.player.debug.log('canvasVideo', 'resize');
 	    const option = this.player._opt;
 	    let width = this.player.width;
 	    let height = this.player.height;
-
 	    if (this.player.isControlBarShow()) {
 	      if (isMobile() && this.player.fullscreen && option.useWebFullScreen) {
 	        width -= CONTROL_HEIGHT;
@@ -1714,44 +1612,36 @@
 	        height -= CONTROL_HEIGHT;
 	      }
 	    }
-
 	    let resizeWidth = this.$videoElement.width;
 	    let resizeHeight = this.$videoElement.height;
 	    const rotate = option.rotate;
 	    let left = (width - resizeWidth) / 2;
 	    let top = (height - resizeHeight) / 2;
-
 	    if (rotate === 270 || rotate === 90) {
 	      resizeWidth = this.$videoElement.height;
 	      resizeHeight = this.$videoElement.width;
 	    }
-
 	    const wScale = width / resizeWidth;
 	    const hScale = height / resizeHeight;
-	    let scale = wScale > hScale ? hScale : wScale; //
-
+	    let scale = wScale > hScale ? hScale : wScale;
+	    //
 	    if (!option.isResize) {
 	      if (wScale !== hScale) {
 	        scale = wScale + ',' + hScale;
 	      }
-	    } //
-
-
+	    }
+	    //
 	    if (option.isFullResize) {
 	      scale = wScale > hScale ? wScale : hScale;
 	    }
-
 	    let transform = "scale(" + scale + ")";
-
 	    if (rotate) {
 	      transform += ' rotate(' + rotate + 'deg)';
 	    }
-
 	    this.$videoElement.style.transform = transform;
 	    this.$videoElement.style.left = left + "px";
 	    this.$videoElement.style.top = top + "px";
 	  }
-
 	}
 
 	class VideoLoader extends CommonLoader$1 {
@@ -1762,12 +1652,10 @@
 	    const $canvasElement = document.createElement('canvas');
 	    $videoElement.muted = true;
 	    $videoElement.disablePictureInPicture = true;
-
 	    if (isAndroid()) {
 	      // default no poster
 	      $videoElement.poster = 'noposter';
 	    }
-
 	    $videoElement.style.position = "absolute";
 	    $videoElement.style.top = 0;
 	    $videoElement.style.left = 0;
@@ -1779,7 +1667,6 @@
 	      encType: ''
 	    };
 	    const _opt = this.player._opt;
-
 	    if (_opt.useWCS && _opt.wcsUseVideoRender) {
 	      this.trackGenerator = new MediaStreamTrackGenerator({
 	        kind: 'video'
@@ -1787,7 +1674,6 @@
 	      $videoElement.srcObject = new MediaStream([this.trackGenerator]);
 	      this.vwriter = this.trackGenerator.writable.getWriter();
 	    }
-
 	    this.$videoElement = $videoElement;
 	    this.$canvasElement = $canvasElement;
 	    this.canvasContext = $canvasElement.getContext('2d');
@@ -1798,10 +1684,8 @@
 	    } = this.player.events;
 	    proxy(this.$videoElement, 'canplay', () => {
 	      this.player.debug.log('Video', `canplay`);
-
 	      if (this._delayPlay) {
 	        this.player.debug.log('Video', `canplay and _delayPlay is true and next play()`);
-
 	        this._play();
 	      }
 	    });
@@ -1812,8 +1696,8 @@
 	    proxy(this.$videoElement, 'timeupdate', event => {
 	      // this.player.emit(EVENTS.videoTimeUpdate, event.timeStamp);
 	      const timeStamp = parseInt(event.timeStamp, 10);
-	      this.player.emit(EVENTS.timeUpdate, timeStamp); // check is pause;
-
+	      this.player.emit(EVENTS.timeUpdate, timeStamp);
+	      // check is pause;
 	      if (!this.isPlaying() && this.init) {
 	        this.player.debug.log('Video', `timeupdate and this.isPlaying is false and retry play`);
 	        this.$videoElement.play();
@@ -1821,12 +1705,10 @@
 	    });
 	    this.player.debug.log('Video', 'init');
 	  }
-
 	  async destroy() {
 	    super.destroy();
 	    this.$canvasElement = null;
 	    this.canvasContext = null;
-
 	    if (this.$videoElement) {
 	      this.$videoElement.pause();
 	      this.$videoElement.currentTime = 0;
@@ -1834,57 +1716,44 @@
 	      this.$videoElement.removeAttribute('src');
 	      this.$videoElement = null;
 	    }
-
 	    if (this.trackGenerator) {
 	      this.trackGenerator.stop();
 	      this.trackGenerator = null;
 	    }
-
 	    if (this.vwriter) {
 	      await this.vwriter.close();
 	      this.vwriter = null;
 	    }
-
 	    this.player.debug.log('Video', 'destroy');
 	  }
-
 	  fixChromeVideoFlashBug() {
 	    const browser = getBrowser();
 	    const type = browser.type.toLowerCase();
-
 	    if (type === 'chrome' || type === 'edge') {
 	      const $container = this.player.$container;
 	      $container.style.backdropFilter = 'blur(0px)';
 	      $container.style.translateZ = '0';
 	    }
 	  }
-
 	  play() {
 	    if (this.$videoElement) {
 	      const readyState = this._getVideoReadyState();
-
 	      this.player.debug.log('Video', `play and readyState: ${readyState}`);
-
 	      if (readyState === 0) {
 	        this.player.debug.warn('Video', 'readyState is 0 and set _delayPlay to true');
 	        this._delayPlay = true;
 	        return;
 	      }
-
 	      this._play();
 	    }
 	  }
-
 	  _getVideoReadyState() {
 	    let result = 0;
-
 	    if (this.$videoElement) {
 	      result = this.$videoElement.readyState;
 	    }
-
 	    return result;
 	  }
-
 	  _play() {
 	    this.$videoElement && this.$videoElement.play().then(() => {
 	      this._delayPlay = false;
@@ -1892,7 +1761,6 @@
 	      setTimeout(() => {
 	        if (!this.isPlaying()) {
 	          this.player.debug.warn('Video', `play failed and retry play`);
-
 	          this._play();
 	        }
 	      }, 100);
@@ -1900,7 +1768,6 @@
 	      this.player.debug.error('Video', '_play error', e);
 	    });
 	  }
-
 	  pause(isNow) {
 	    // 预防
 	    // https://developer.chrome.com/blog/play-request-was-interrupted/
@@ -1913,9 +1780,7 @@
 	      }, 100);
 	    }
 	  }
-
 	  clearView() {}
-
 	  screenshot(filename, format, quality, type) {
 	    filename = filename || now();
 	    type = type || SCREENSHOT_TYPE.download;
@@ -1925,38 +1790,32 @@
 	      webp: 'image/webp'
 	    };
 	    let encoderOptions = 0.92;
-
 	    if (!formatType[format] && SCREENSHOT_TYPE[format]) {
 	      type = format;
 	      format = 'png';
 	      quality = undefined;
 	    }
-
 	    if (typeof quality === "string") {
 	      type = quality;
 	      quality = undefined;
 	    }
-
 	    if (typeof quality !== 'undefined') {
 	      encoderOptions = Number(quality);
 	    }
-
 	    const $video = this.$videoElement;
 	    let canvas = this.$canvasElement;
 	    canvas.width = $video.videoWidth;
 	    canvas.height = $video.videoHeight;
 	    this.canvasContext.drawImage($video, 0, 0, canvas.width, canvas.height);
-	    const dataURL = canvas.toDataURL(formatType[format] || formatType.png, encoderOptions); // release memory
-
+	    const dataURL = canvas.toDataURL(formatType[format] || formatType.png, encoderOptions);
+	    // release memory
 	    this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 	    canvas.width = 0;
 	    canvas.height = 0;
-
 	    if (type === SCREENSHOT_TYPE.base64) {
 	      return dataURL;
 	    } else {
 	      const file = dataURLToFile(dataURL);
-
 	      if (type === SCREENSHOT_TYPE.blob) {
 	        return file;
 	      } else if (type === SCREENSHOT_TYPE.download) {
@@ -1965,26 +1824,23 @@
 	      }
 	    }
 	  }
-
 	  initCanvasViewSize() {
 	    this.resize();
-	  } //
+	  }
 
-
+	  //
 	  render(msg) {
 	    if (this.vwriter) {
-	      this.vwriter.write(msg.videoFrame); //  release memory
-
+	      this.vwriter.write(msg.videoFrame);
+	      //  release memory
 	      msg.videoFrame.close();
 	    }
 	  }
-
 	  resize() {
 	    let width = this.player.width;
 	    let height = this.player.height;
 	    const option = this.player._opt;
 	    const rotate = option.rotate;
-
 	    if (this.player.isControlBarShow()) {
 	      if (isMobile() && this.player.fullscreen && option.useWebFullScreen) {
 	        width -= CONTROL_HEIGHT;
@@ -1992,42 +1848,38 @@
 	        height -= CONTROL_HEIGHT;
 	      }
 	    }
-
 	    this.$videoElement.width = width;
 	    this.$videoElement.height = height;
-
 	    if (rotate === 270 || rotate === 90) {
 	      this.$videoElement.width = height;
 	      this.$videoElement.height = width;
 	    }
-
 	    let resizeWidth = this.$videoElement.width;
 	    let resizeHeight = this.$videoElement.height;
 	    let left = (width - resizeWidth) / 2;
 	    let top = (height - resizeHeight) / 2;
-	    let objectFill = 'contain'; // 默认是true
-	    // 视频画面做等比缩放后,高或宽对齐canvas区域,画面不被拉伸,但有黑边
-	    // 视频画面完全填充canvas区域,画面会被拉伸
+	    let objectFill = 'contain';
 
+	    // 默认是true
+	    // 视频画面做等比缩放后,高或宽对齐canvas区域,画面不被拉伸,但有黑边
+
+	    // 视频画面完全填充canvas区域,画面会被拉伸
 	    if (!option.isResize) {
 	      objectFill = 'fill';
-	    } // 视频画面做等比缩放后,完全填充canvas区域,画面不被拉伸,没有黑边,但画面显示不全
+	    }
 
-
+	    // 视频画面做等比缩放后,完全填充canvas区域,画面不被拉伸,没有黑边,但画面显示不全
 	    if (option.isFullResize) {
 	      objectFill = 'none';
 	    }
-
 	    this.$videoElement.style.objectFit = objectFill;
 	    this.$videoElement.style.transform = 'rotate(' + rotate + 'deg)';
 	    this.$videoElement.style.left = left + "px";
 	    this.$videoElement.style.top = top + "px";
 	  }
-
 	  isPlaying() {
 	    return this.$videoElement && !this.$videoElement.paused;
 	  }
-
 	}
 
 	class Video {
@@ -2035,7 +1887,6 @@
 	    const Loader = Video.getLoaderFactory(player._opt);
 	    return new Loader(player);
 	  }
-
 	  static getLoaderFactory(opt) {
 	    if (opt.useMSE || opt.useWCS && !opt.useOffscreen && opt.wcsUseVideoRender) {
 	      return VideoLoader;
@@ -2043,7 +1894,6 @@
 	      return CanvasVideoLoader;
 	    }
 	  }
-
 	}
 
 	class AudioContextLoader extends Emitter {
@@ -2054,35 +1904,34 @@
 	    this.scriptNode = null;
 	    this.hasInitScriptNode = false;
 	    this.audioContextChannel = null;
-	    this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); //
-
-	    this.gainNode = this.audioContext.createGain(); // Get an AudioBufferSourceNode.
+	    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	    //
+	    this.gainNode = this.audioContext.createGain();
+	    // Get an AudioBufferSourceNode.
 	    // This is the AudioNode to use when we want to play an AudioBuffer
-
-	    const source = this.audioContext.createBufferSource(); // set the buffer in the AudioBufferSourceNode
-
-	    source.buffer = this.audioContext.createBuffer(1, 1, 22050); // connect the AudioBufferSourceNode to the
+	    const source = this.audioContext.createBufferSource();
+	    // set the buffer in the AudioBufferSourceNode
+	    source.buffer = this.audioContext.createBuffer(1, 1, 22050);
+	    // connect the AudioBufferSourceNode to the
 	    // destination so we can hear the sound
-
-	    source.connect(this.audioContext.destination); // noteOn as start
+	    source.connect(this.audioContext.destination);
+	    // noteOn as start
 	    // start the source playing
-
 	    if (source.noteOn) {
 	      source.noteOn(0);
 	    } else {
 	      source.start(0);
 	    }
-
-	    this.audioBufferSourceNode = source; //
-
-	    this.mediaStreamAudioDestinationNode = this.audioContext.createMediaStreamDestination(); //
-
-	    this.audioEnabled(true); // default setting 0
-
+	    this.audioBufferSourceNode = source;
+	    //
+	    this.mediaStreamAudioDestinationNode = this.audioContext.createMediaStreamDestination();
+	    //
+	    this.audioEnabled(true);
+	    // default setting 0
 	    this.gainNode.gain.value = 0;
 	    this._prevVolume = null;
-	    this.playing = false; //
-
+	    this.playing = false;
+	    //
 	    this.audioSyncVideoOption = {
 	      diff: null
 	    };
@@ -2092,15 +1941,15 @@
 	      sampleRate: ''
 	    };
 	    this.init = false;
-	    this.hasAudio = false; // update
+	    this.hasAudio = false;
 
+	    // update
 	    this.on(EVENTS.videoSyncAudio, options => {
 	      // this.player.debug.log('AudioContext', `videoSyncAudio , audioTimestamp: ${options.audioTimestamp},videoTimestamp: ${options.videoTimestamp},diff:${options.diff}`)
 	      this.audioSyncVideoOption = options;
 	    });
 	    this.player.debug.log('AudioContext', 'init');
 	  }
-
 	  resetInit() {
 	    this.init = false;
 	    this.audioInfo = {
@@ -2109,25 +1958,20 @@
 	      sampleRate: ''
 	    };
 	  }
-
 	  async destroy() {
 	    this.closeAudio();
 	    this.resetInit();
-
 	    if (this.audioContext) {
 	      await this.audioContext.close();
 	      this.audioContext = null;
 	    }
-
 	    this.gainNode = null;
 	    this.hasAudio = false;
 	    this.playing = false;
-
 	    if (this.scriptNode) {
 	      this.scriptNode.onaudioprocess = noop;
 	      this.scriptNode = null;
 	    }
-
 	    this.audioBufferSourceNode = null;
 	    this.mediaStreamAudioDestinationNode = null;
 	    this.hasInitScriptNode = false;
@@ -2138,113 +1982,99 @@
 	    this.off();
 	    this.player.debug.log('AudioContext', 'destroy');
 	  }
-
 	  updateAudioInfo(data) {
 	    if (data.encTypeCode) {
 	      this.audioInfo.encType = AUDIO_ENC_TYPE[data.encTypeCode];
 	      this.audioInfo.encTypeCode = data.encTypeCode;
 	    }
-
 	    if (data.channels) {
 	      this.audioInfo.channels = data.channels;
 	    }
-
 	    if (data.sampleRate) {
 	      this.audioInfo.sampleRate = data.sampleRate;
-	    } // audio 基本信息
+	    }
 
-
+	    // audio 基本信息
 	    if (this.audioInfo.sampleRate && this.audioInfo.channels && this.audioInfo.encType && !this.init) {
 	      this.player.emit(EVENTS.audioInfo, this.audioInfo);
 	      this.init = true;
 	    }
-	  } //
+	  }
 
-
+	  //
 	  get isPlaying() {
 	    return this.playing;
 	  }
-
 	  get isMute() {
 	    return this.gainNode.gain.value === 0;
 	  }
-
 	  get volume() {
 	    return this.gainNode.gain.value;
 	  }
-
 	  get bufferSize() {
 	    return this.bufferList.length;
 	  }
-
 	  initScriptNode() {
 	    this.playing = true;
-
 	    if (this.hasInitScriptNode) {
 	      return;
 	    }
-
 	    const channels = this.audioInfo.channels;
-	    const scriptNode = this.audioContext.createScriptProcessor(1024, 0, channels); // tips: if audio isStateSuspended  onaudioprocess method not working
-
+	    const scriptNode = this.audioContext.createScriptProcessor(1024, 0, channels);
+	    // tips: if audio isStateSuspended  onaudioprocess method not working
 	    scriptNode.onaudioprocess = audioProcessingEvent => {
 	      const outputBuffer = audioProcessingEvent.outputBuffer;
-
 	      if (this.bufferList.length && this.playing) {
 	        // just for wasm
 	        if (!this.player._opt.useWCS && !this.player._opt.useMSE && this.player._opt.wasmDecodeAudioSyncVideo) {
 	          // audio > video
 	          // wait
 	          if (this.audioSyncVideoOption.diff > AUDIO_SYNC_VIDEO_DIFF) {
-	            this.player.debug.warn('AudioContext', `audioSyncVideoOption more than diff :${this.audioSyncVideoOption.diff}, waiting`); // wait
-
+	            this.player.debug.warn('AudioContext', `audioSyncVideoOption more than diff :${this.audioSyncVideoOption.diff}, waiting`);
+	            // wait
 	            return;
-	          } // audio < video
+	          }
+	          // audio < video
 	          // throw away then chase video
 	          else if (this.audioSyncVideoOption.diff < -AUDIO_SYNC_VIDEO_DIFF) {
-	            this.player.debug.warn('AudioContext', `audioSyncVideoOption less than diff :${this.audioSyncVideoOption.diff}, dropping`); //
+	            this.player.debug.warn('AudioContext', `audioSyncVideoOption less than diff :${this.audioSyncVideoOption.diff}, dropping`);
 
-	            let bufferItem = this.bufferList.shift(); //
-
+	            //
+	            let bufferItem = this.bufferList.shift();
+	            //
 	            while (bufferItem.ts - this.player.videoTimestamp < -AUDIO_SYNC_VIDEO_DIFF && this.bufferList.length > 0) {
 	              // this.player.debug.warn('AudioContext', `audioSyncVideoOption less than inner ts is:${bufferItem.ts}, videoTimestamp is ${this.player.videoTimestamp},diff:${bufferItem.ts - this.player.videoTimestamp}`)
 	              bufferItem = this.bufferList.shift();
 	            }
-
 	            if (this.bufferList.length === 0) {
 	              return;
 	            }
 	          }
 	        }
-
 	        if (this.bufferList.length === 0) {
 	          return;
 	        }
+	        const bufferItem = this.bufferList.shift();
 
-	        const bufferItem = this.bufferList.shift(); // update audio time stamp
-
+	        // update audio time stamp
 	        if (bufferItem && bufferItem.ts) {
 	          this.player.audioTimestamp = bufferItem.ts;
 	        }
-
 	        for (let channel = 0; channel < channels; channel++) {
 	          const b = bufferItem.buffer[channel];
 	          const nowBuffering = outputBuffer.getChannelData(channel);
-
 	          for (let i = 0; i < 1024; i++) {
 	            nowBuffering[i] = b[i] || 0;
 	          }
 	        }
 	      }
 	    };
-
 	    scriptNode.connect(this.gainNode);
 	    this.scriptNode = scriptNode;
 	    this.gainNode.connect(this.audioContext.destination);
 	    this.gainNode.connect(this.mediaStreamAudioDestinationNode);
 	    this.hasInitScriptNode = true;
 	  }
-
 	  mute(flag) {
 	    if (flag) {
 	      // if (!this.isMute) {
@@ -2259,17 +2089,13 @@
 	      this.setVolume(0.5);
 	    }
 	  }
-
 	  setVolume(volume) {
 	    volume = parseFloat(volume).toFixed(2);
-
 	    if (isNaN(volume)) {
 	      return;
 	    }
-
 	    this.audioEnabled(true);
 	    volume = clamp(volume, 0, 1);
-
 	    if (this._prevVolume === null) {
 	      this.player.emit(EVENTS.mute, volume === 0);
 	    } else {
@@ -2279,27 +2105,23 @@
 	        this.player.emit(EVENTS.mute, true);
 	      }
 	    }
-
 	    this.gainNode.gain.value = volume;
 	    this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
 	    this.player.emit(EVENTS.volumechange, this.player.volume);
 	    this.player.emit(EVENTS.volume, this.player.volume); // outer
 	    // save last volume
-
 	    this._prevVolume = volume;
 	  }
-
 	  closeAudio() {
 	    if (this.hasInitScriptNode) {
 	      this.scriptNode && this.scriptNode.disconnect(this.gainNode);
 	      this.gainNode && this.gainNode.disconnect(this.audioContext.destination);
 	      this.gainNode && this.gainNode.disconnect(this.mediaStreamAudioDestinationNode);
 	    }
-
 	    this.clear();
-	  } // 是否播放。。。
+	  }
 
-
+	  // 是否播放。。。
 	  audioEnabled(flag) {
 	    if (flag) {
 	      if (this.audioContext.state === 'suspended') {
@@ -2313,39 +2135,34 @@
 	      }
 	    }
 	  }
-
 	  isStateRunning() {
 	    return this.audioContext.state === 'running';
 	  }
-
 	  isStateSuspended() {
 	    return this.audioContext.state === 'suspended';
 	  }
-
 	  clear() {
 	    this.bufferList = [];
 	  }
-
 	  play(buffer, ts) {
 	    // if is mute
 	    if (this.isMute) {
 	      return;
 	    }
-
 	    this.hasAudio = true;
 	    this.bufferList.push({
 	      buffer,
 	      ts
 	    });
-
 	    if (this.bufferList.length > 20) {
-	      this.player.debug.warn('AudioContext', `bufferList is large: ${this.bufferList.length}`); // out of memory
+	      this.player.debug.warn('AudioContext', `bufferList is large: ${this.bufferList.length}`);
 
+	      // out of memory
 	      if (this.bufferList.length > 50) {
 	        this.bufferList.shift();
 	      }
-	    } // this.player.debug.log('AudioContext', `bufferList is ${this.bufferList.length}`)
-
+	    }
+	    // this.player.debug.log('AudioContext', `bufferList is ${this.bufferList.length}`)
 	  }
 
 	  pause() {
@@ -2355,15 +2172,12 @@
 	    this.playing = false;
 	    this.clear();
 	  }
-
 	  resume() {
 	    this.playing = true;
 	  }
-
 	  getLastVolume() {
 	    return this._prevVolume;
 	  }
-
 	}
 
 	class Audio {
@@ -2371,11 +2185,9 @@
 	    const Loader = Audio.getLoaderFactory();
 	    return new Loader(player);
 	  }
-
 	  static getLoaderFactory() {
 	    return AudioContextLoader;
 	  }
-
 	}
 
 	class FetchLoader extends Emitter {
@@ -2383,29 +2195,26 @@
 	    super();
 	    this.player = player;
 	    this.playing = false;
-	    this.abortController = new AbortController(); //
-
+	    this.abortController = new AbortController();
+	    //
 	    this.streamRate = calculationRate(rate => {
 	      player.emit(EVENTS.kBps, (rate / 1024).toFixed(2));
 	    });
 	    player.debug.log('FetchStream', 'init');
 	  }
-
 	  async destroy() {
 	    this.abort();
 	    this.off();
 	    this.streamRate = null;
 	    this.player.debug.log('FetchStream', 'destroy');
 	  }
+
 	  /**
 	   *
 	   * @param url
 	   * @param options
 	   */
-
-
-	  fetchStream(url) {
-	    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  fetchStream(url, options = {}) {
 	    const {
 	      demux
 	    } = this.player;
@@ -2419,14 +2228,11 @@
 	    fetch(url, fetchOptions).then(res => {
 	      const reader = res.body.getReader();
 	      this.emit(EVENTS.streamSuccess);
-
 	      const fetchNext = () => {
-	        reader.read().then(_ref => {
-	          let {
-	            done,
-	            value
-	          } = _ref;
-
+	        reader.read().then(({
+	          done,
+	          value
+	        }) => {
 	          if (done) {
 	            demux.close();
 	          } else {
@@ -2436,46 +2242,39 @@
 	          }
 	        }).catch(e => {
 	          demux.close();
-	          const errorString = e.toString(); // aborted a request 。
-
+	          const errorString = e.toString();
+	          // aborted a request 。
 	          if (errorString.indexOf(FETCH_ERROR.abortError1) !== -1) {
 	            return;
 	          }
-
 	          if (errorString.indexOf(FETCH_ERROR.abortError2) !== -1) {
 	            return;
 	          }
-
 	          if (e.name === FETCH_ERROR.abort) {
 	            return;
 	          }
-
 	          this.abort();
 	          this.emit(EVENTS_ERROR.fetchError, e);
 	          this.player.emit(EVENTS.error, EVENTS_ERROR.fetchError);
 	        });
 	      };
-
 	      fetchNext();
 	    }).catch(e => {
 	      if (e.name === 'AbortError') {
 	        return;
 	      }
-
 	      demux.close();
 	      this.abort();
 	      this.emit(EVENTS_ERROR.fetchError, e);
 	      this.player.emit(EVENTS.error, EVENTS_ERROR.fetchError);
 	    });
 	  }
-
 	  abort() {
 	    if (this.abortController) {
 	      this.abortController.abort();
 	      this.abortController = null;
 	    }
 	  }
-
 	}
 
 	class WebsocketLoader extends Emitter {
@@ -2484,27 +2283,24 @@
 	    this.player = player;
 	    this.socket = null;
 	    this.socketStatus = WEBSOCKET_STATUS.notConnect;
-	    this.wsUrl = null; //
-
+	    this.wsUrl = null;
+	    //
 	    this.streamRate = calculationRate(rate => {
 	      player.emit(EVENTS.kBps, (rate / 1024).toFixed(2));
 	    });
 	    player.debug.log('WebsocketLoader', 'init');
 	  }
-
 	  async destroy() {
 	    if (this.socket) {
 	      this.socket.close(1000, 'Client disconnecting');
 	      this.socket = null;
 	    }
-
 	    this.socketStatus = WEBSOCKET_STATUS.notConnect;
 	    this.streamRate = null;
 	    this.wsUrl = null;
 	    this.off();
 	    this.player.debug.log('websocketLoader', 'destroy');
 	  }
-
 	  _createWebSocket() {
 	    const player = this.player;
 	    const {
@@ -2523,7 +2319,6 @@
 	    });
 	    proxy(this.socket, 'message', event => {
 	      this.streamRate && this.streamRate(event.data.byteLength);
-
 	      this._handleMessage(event.data);
 	    });
 	    proxy(this.socket, 'close', () => {
@@ -2539,35 +2334,30 @@
 	      demux.close();
 	      debug.log('websocketLoader', `socket error:`, error);
 	    });
-	  } //
+	  }
 
-
+	  //
 	  _handleMessage(message) {
 	    const {
 	      demux
 	    } = this.player;
-
 	    if (!demux) {
 	      this.player.debug.warn('websocketLoader', 'websocket handle message demux is null');
 	      return;
 	    }
-
 	    demux.dispatch(message);
 	  }
+
 	  /**
 	   *
 	   * @param url
 	   * @param options
 	   */
-
-
 	  fetchStream(url, options) {
 	    this.player._times.streamStart = now();
 	    this.wsUrl = url;
-
 	    this._createWebSocket();
 	  }
-
 	}
 
 	class Stream {
@@ -2575,7 +2365,6 @@
 	    const Loader = Stream.getLoaderFactory(player._opt.protocol);
 	    return new Loader(player);
 	  }
-
 	  static getLoaderFactory(protocol) {
 	    if (protocol === PLAYER_PLAY_PROTOCOL.fetch) {
 	      return FetchLoader;
@@ -2583,7 +2372,6 @@
 	      return WebsocketLoader;
 	    }
 	  }
-
 	}
 
 	var RecordRTC_1 = createCommonjsModule(function (module) {
@@ -8766,29 +8554,22 @@
 	    this.recordingInterval = null;
 	    player.debug.log('Recorder', 'init');
 	  }
-
 	  destroy() {
 	    this._reset();
-
 	    this.player.debug.log('Recorder', 'destroy');
 	  }
-
 	  setFileName(fileName, fileType) {
 	    this.fileName = fileName;
-
 	    if (FILE_SUFFIX.mp4 === fileType || FILE_SUFFIX.webm === fileType) {
 	      this.fileType = fileType;
 	    }
 	  }
-
 	  get recording() {
 	    return this.isRecording;
 	  }
-
 	  get recordTime() {
 	    return this.recordingTimestamp;
 	  }
-
 	  startRecord() {
 	    const debug = this.player.debug;
 	    const options = {
@@ -8799,28 +8580,22 @@
 	      },
 	      disableLogs: !this.player._opt.debug
 	    };
-
 	    try {
 	      const stream = this.player.video.$videoElement.captureStream(25);
-
 	      if (this.player.audio && this.player.audio.mediaStreamAudioDestinationNode && this.player.audio.mediaStreamAudioDestinationNode.stream && !this.player.audio.isStateSuspended() && this.player.audio.hasAudio && this.player._opt.hasAudio) {
 	        const audioStream = this.player.audio.mediaStreamAudioDestinationNode.stream;
-
 	        if (audioStream.getAudioTracks().length > 0) {
 	          const audioTrack = audioStream.getAudioTracks()[0];
-
 	          if (audioTrack && audioTrack.enabled) {
 	            stream.addTrack(audioTrack);
 	          }
 	        }
 	      }
-
 	      this.recorder = RecordRTC_1(stream, options);
 	    } catch (e) {
 	      debug.error('Recorder', 'startRecord error', e);
 	      this.emit(EVENTS.recordCreateError);
 	    }
-
 	    if (this.recorder) {
 	      this.isRecording = true;
 	      this.player.emit(EVENTS.recording, true);
@@ -8833,42 +8608,32 @@
 	      }, 1000);
 	    }
 	  }
-
 	  stopRecordAndSave() {
 	    if (!this.recorder || !this.isRecording) {
 	      return;
 	    }
-
 	    this.recorder.stopRecording(() => {
 	      this.player.debug.log('Recorder', 'stop recording');
 	      this.player.emit(EVENTS.recordEnd);
 	      const fileName = (this.fileName || now()) + '.' + (this.fileType || FILE_SUFFIX.webm);
 	      saveAs(this.recorder.getBlob(), fileName);
-
 	      this._reset();
-
 	      this.player.emit(EVENTS.recording, false);
 	    });
 	  }
-
 	  _reset() {
 	    this.isRecording = false;
 	    this.recordingTimestamp = 0;
-
 	    if (this.recorder) {
 	      this.recorder.destroy();
 	      this.recorder = null;
 	    }
-
 	    this.fileName = null;
-
 	    if (this.recordingInterval) {
 	      clearInterval(this.recordingInterval);
 	    }
-
 	    this.recordingInterval = null;
 	  }
-
 	}
 
 	class Recorder {
@@ -8876,23 +8641,18 @@
 	    const Loader = Recorder.getLoaderFactory();
 	    return new Loader(player);
 	  }
-
 	  static getLoaderFactory() {
 	    return RecordRTCLoader;
 	  }
-
 	}
 
 	class DecoderWorker {
 	  constructor(player) {
 	    this.player = player;
 	    this.decoderWorker = new Worker(player._opt.decoder);
-
 	    this._initDecoderWorker();
-
 	    player.debug.log('decoderWorker', 'init');
 	  }
-
 	  async destroy() {
 	    this.decoderWorker.postMessage({
 	      cmd: WORKER_SEND_TYPE.close
@@ -8901,7 +8661,6 @@
 	    this.decoderWorker = null;
 	    this.player.debug.log(`decoderWorker`, 'destroy');
 	  }
-
 	  _initDecoderWorker() {
 	    const {
 	      debug,
@@ -8909,68 +8668,51 @@
 	        proxy
 	      }
 	    } = this.player;
-
 	    this.decoderWorker.onmessage = event => {
 	      const msg = event.data;
-
 	      switch (msg.cmd) {
 	        case WORKER_CMD_TYPE.init:
 	          debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.init);
-
 	          if (!this.player.loaded) {
 	            this.player.emit(EVENTS.load);
 	          }
-
 	          this.player.emit(EVENTS.decoderWorkerInit);
-
 	          this._initWork();
-
 	          break;
-
 	        case WORKER_CMD_TYPE.videoCode:
 	          debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.videoCode, msg.code);
-
 	          if (!this.player._times.decodeStart) {
 	            this.player._times.decodeStart = now();
 	          }
-
 	          this.player.video.updateVideoInfo({
 	            encTypeCode: msg.code
 	          });
 	          break;
-
 	        case WORKER_CMD_TYPE.audioCode:
 	          debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.audioCode, msg.code);
 	          this.player.audio && this.player.audio.updateAudioInfo({
 	            encTypeCode: msg.code
 	          });
 	          break;
-
 	        case WORKER_CMD_TYPE.initVideo:
 	          debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.initVideo, `width:${msg.w},height:${msg.h}`);
 	          this.player.video.updateVideoInfo({
 	            width: msg.w,
 	            height: msg.h
 	          });
-
 	          if (!this.player._opt.openWebglAlignment && !isWebglRenderSupport(msg.w)) {
 	            this.player.emit(EVENTS_ERROR.webglAlignmentError);
 	            return;
 	          }
-
 	          this.player.video.initCanvasViewSize();
 	          break;
-
 	        case WORKER_CMD_TYPE.initAudio:
 	          debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.initAudio, `channels:${msg.channels},sampleRate:${msg.sampleRate}`);
-
 	          if (this.player.audio) {
 	            this.player.audio.updateAudioInfo(msg);
 	            this.player.audio.initScriptNode(msg);
 	          }
-
 	          break;
-
 	        case WORKER_CMD_TYPE.render:
 	          // debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.render, `msg ts:${msg.ts}`);
 	          this.player.handleRender();
@@ -8981,38 +8723,30 @@
 	            ts: msg.ts,
 	            buf: msg.delay
 	          });
-
 	          if (!this.player._times.videoStart) {
 	            this.player._times.videoStart = now();
 	            this.player.handlePlayToRenderTimes();
 	          }
-
 	          break;
-
 	        case WORKER_CMD_TYPE.playAudio:
 	          // debug.log(`decoderWorker`, 'onmessage:', WORKER_CMD_TYPE.playAudio, `msg ts:${msg.ts}`);
 	          // 只有在 playing 的时候。
 	          if (this.player.playing && this.player.audio) {
 	            this.player.audio.play(msg.buffer, msg.ts);
 	          }
-
 	          break;
-
 	        case WORKER_CMD_TYPE.wasmError:
 	          if (msg.message) {
 	            if (msg.message.indexOf(WASM_ERROR.invalidNalUnitSize) !== -1) {
 	              this.player.emitError(EVENTS_ERROR.wasmDecodeError);
 	            }
 	          }
-
 	          break;
-
 	        default:
 	          this.player[msg.cmd] && this.player[msg.cmd](msg);
 	      }
 	    };
 	  }
-
 	  _initWork() {
 	    const opt = {
 	      debug: this.player._opt.debug,
@@ -9028,21 +8762,19 @@
 	      sampleRate: this.player.audio && this.player.audio.audioContext.sampleRate || 0
 	    });
 	  }
-
 	  decodeVideo(arrayBuffer, ts, isIFrame) {
 	    const options = {
 	      type: MEDIA_TYPE.video,
 	      ts: Math.max(ts, 0),
 	      isIFrame
-	    }; // this.player.debug.log('decoderWorker', 'decodeVideo', options);
-
+	    };
+	    // this.player.debug.log('decoderWorker', 'decodeVideo', options);
 	    this.decoderWorker.postMessage({
 	      cmd: WORKER_SEND_TYPE.decode,
 	      buffer: arrayBuffer,
 	      options
 	    }, [arrayBuffer.buffer]);
 	  }
-
 	  decodeAudio(arrayBuffer, ts) {
 	    if (this.player._opt.useWCS) {
 	      this._decodeAudioNoDelay(arrayBuffer, ts);
@@ -9051,22 +8783,21 @@
 	    } else {
 	      this._decodeAudio(arrayBuffer, ts);
 	    }
-	  } //
+	  }
 
-
+	  //
 	  _decodeAudio(arrayBuffer, ts) {
 	    const options = {
 	      type: MEDIA_TYPE.audio,
 	      ts: Math.max(ts, 0)
-	    }; // this.player.debug.log('decoderWorker', 'decodeAudio',options);
-
+	    };
+	    // this.player.debug.log('decoderWorker', 'decodeAudio',options);
 	    this.decoderWorker.postMessage({
 	      cmd: WORKER_SEND_TYPE.decode,
 	      buffer: arrayBuffer,
 	      options
 	    }, [arrayBuffer.buffer]);
 	  }
-
 	  _decodeAudioNoDelay(arrayBuffer, ts) {
 	    // console.log('_decodeAudioNoDelay', arrayBuffer);
 	    this.decoderWorker.postMessage({
@@ -9075,7 +8806,6 @@
 	      ts: Math.max(ts, 0)
 	    }, [arrayBuffer.buffer]);
 	  }
-
 	  updateWorkConfig(config) {
 	    this.decoderWorker.postMessage({
 	      cmd: WORKER_SEND_TYPE.updateConfig,
@@ -9083,7 +8813,6 @@
 	      value: config.value
 	    });
 	  }
-
 	}
 
 	class CommonLoader extends Emitter {
@@ -9098,13 +8827,11 @@
 	    this.dropping = false;
 	    this.initInterval();
 	  }
-
 	  destroy() {
 	    if (this.stopId) {
 	      clearInterval(this.stopId);
 	      this.stopId = null;
 	    }
-
 	    this.firstTimestamp = null;
 	    this.startTimestamp = null;
 	    this.delay = -1;
@@ -9113,12 +8840,10 @@
 	    this.off();
 	    this.player.debug.log('CommonDemux', 'destroy');
 	  }
-
 	  getDelay(timestamp) {
 	    if (!timestamp) {
 	      return -1;
 	    }
-
 	    if (!this.firstTimestamp) {
 	      this.firstTimestamp = timestamp;
 	      this.startTimestamp = Date.now();
@@ -9127,7 +8852,6 @@
 	      if (timestamp) {
 	        const localTimestamp = Date.now() - this.startTimestamp;
 	        const timeTimestamp = timestamp - this.firstTimestamp;
-
 	        if (localTimestamp >= timeTimestamp) {
 	          this.delay = localTimestamp - timeTimestamp;
 	        } else {
@@ -9135,61 +8859,52 @@
 	        }
 	      }
 	    }
-
 	    return this.delay;
 	  }
-
 	  resetDelay() {
 	    this.firstTimestamp = null;
 	    this.startTimestamp = null;
 	    this.delay = -1;
 	    this.dropping = false;
-	  } //
+	  }
 
-
+	  //
 	  initInterval() {
 	    this.player.debug.log('common dumex', `init Interval`);
-
 	    let _loop = () => {
 	      let data;
 	      const videoBuffer = this.player._opt.videoBuffer;
 	      const videoBufferDelay = this.player._opt.videoBufferDelay;
-
+	      if (this.player.isDestroyedOrClosed()) {
+	        return;
+	      }
 	      if (this.player._opt.useMSE && this.player.mseDecoder && this.player.mseDecoder.getSourceBufferUpdating()) {
 	        this.player.debug.warn('CommonDemux', `_loop getSourceBufferUpdating is true and bufferList length is ${this.bufferList.length}`);
 	        return;
 	      }
-
 	      if (this.bufferList.length) {
 	        if (this.dropping) {
 	          // this.player.debug.log('common dumex', `is dropping`);
 	          data = this.bufferList.shift();
-
 	          if (data.type === MEDIA_TYPE.audio && data.payload[1] === 0) {
 	            this._doDecoderDecode(data);
 	          }
-
 	          while (!data.isIFrame && this.bufferList.length) {
 	            data = this.bufferList.shift();
-
 	            if (data.type === MEDIA_TYPE.audio && data.payload[1] === 0) {
 	              this._doDecoderDecode(data);
 	            }
-	          } // i frame
-
-
+	          }
+	          // i frame
 	          if (data.isIFrame && this.getDelay(data.ts) <= Math.min(videoBuffer, 200)) {
 	            this.dropping = false;
-
 	            this._doDecoderDecode(data);
 	          }
 	        } else {
 	          data = this.bufferList[0];
-
 	          if (this.getDelay(data.ts) === -1) {
 	            // this.player.debug.log('common dumex', `delay is -1`);
 	            this.bufferList.shift();
-
 	            this._doDecoderDecode(data);
 	          } else if (this.delay > videoBuffer + videoBufferDelay) {
 	            // this.player.debug.log('common dumex', `delay is ${this.delay}, set dropping is true`);
@@ -9197,23 +8912,18 @@
 	            this.dropping = true;
 	          } else {
 	            data = this.bufferList[0];
-
 	            if (this.getDelay(data.ts) > videoBuffer) {
 	              // drop frame
 	              this.bufferList.shift();
-
 	              this._doDecoderDecode(data);
 	            }
 	          }
 	        }
 	      }
 	    };
-
 	    _loop();
-
 	    this.stopId = setInterval(_loop, 10);
 	  }
-
 	  _doDecode(payload, type, ts, isIFrame, cts) {
 	    const player = this.player;
 	    let options = {
@@ -9221,20 +8931,18 @@
 	      cts: cts,
 	      type: type,
 	      isIFrame: false
-	    }; // use offscreen
-
+	    };
+	    // use offscreen
 	    if (player._opt.useWCS && !player._opt.useOffscreen) {
 	      if (type === MEDIA_TYPE.video) {
 	        options.isIFrame = isIFrame;
 	      }
-
 	      this.pushBuffer(payload, options);
 	    } else if (player._opt.useMSE) {
 	      // use mse
 	      if (type === MEDIA_TYPE.video) {
 	        options.isIFrame = isIFrame;
 	      }
-
 	      this.pushBuffer(payload, options);
 	    } else {
 	      //
@@ -9247,14 +8955,12 @@
 	      }
 	    }
 	  }
-
 	  _doDecoderDecode(data) {
 	    const player = this.player;
 	    const {
 	      webcodecsDecoder,
 	      mseDecoder
 	    } = player;
-
 	    if (data.type === MEDIA_TYPE.audio) {
 	      if (player._opt.hasAudio) {
 	        player.decoderWorker && player.decoderWorker.decodeAudio(data.payload, data.ts);
@@ -9267,7 +8973,6 @@
 	      }
 	    }
 	  }
-
 	  pushBuffer(payload, options) {
 	    // 音频
 	    if (options.type === MEDIA_TYPE.audio) {
@@ -9286,9 +8991,7 @@
 	      });
 	    }
 	  }
-
 	  close() {}
-
 	  _decodeEnhancedH265Video(payload, ts) {
 	    const flags = payload[0];
 	    const frameTypeEx = flags & 0x30;
@@ -9297,17 +9000,14 @@
 	    const tmp = new ArrayBuffer(4);
 	    const tmp32 = new Uint32Array(tmp);
 	    const isAV1 = String.fromCharCode(codecId[0]) == 'a';
-
 	    if (packetEx === PACKET_TYPE_EX.PACKET_TYPE_SEQ_START) {
 	      if (frameTypeEx === FRAME_TYPE_EX.FT_KEY) {
 	        // header video info
 	        const extraData = payload.slice(5);
-
 	        if (!isAV1) {
 	          const payloadBuffer = new Uint8Array(5 + extraData.length);
 	          payloadBuffer.set([0x1c, 0x00, 0x00, 0x00, 0x00], 0);
 	          payloadBuffer.set(extraData, 5);
-
 	          this._doDecode(payloadBuffer, MEDIA_TYPE.video, 0, true, 0);
 	        }
 	      }
@@ -9315,7 +9015,6 @@
 	      let payloadBuffer = payload;
 	      let cts = 0;
 	      const isIFrame = frameTypeEx === FRAME_TYPE_EX.FT_KEY;
-
 	      if (!isAV1) {
 	        // h265
 	        tmp32[0] = payload[4];
@@ -9325,22 +9024,18 @@
 	        cts = tmp32[0];
 	        const data = payload.slice(8);
 	        payloadBuffer = hevcEncoderNalePacketNotLength(data, isIFrame);
-
 	        this._doDecode(payloadBuffer, MEDIA_TYPE.video, ts, isIFrame, cts);
 	      }
 	    } else if (packetEx === PACKET_TYPE_EX.PACKET_TYPE_FRAMESX) {
 	      const isIFrame = frameTypeEx === FRAME_TYPE_EX.FT_KEY;
 	      const data = payload.slice(5);
 	      let payloadBuffer = hevcEncoderNalePacketNotLength(data, isIFrame);
-
 	      this._doDecode(payloadBuffer, MEDIA_TYPE.video, ts, isIFrame, 0);
 	    }
 	  }
-
 	  _isEnhancedH265Header(flags) {
 	    return (flags & FRAME_HEADER_EX) === FRAME_HEADER_EX;
 	  }
-
 	}
 
 	class FlvLoader extends CommonLoader {
@@ -9350,25 +9045,21 @@
 	    this.flvDemux = this.dispatchFlvData(this.input);
 	    player.debug.log('FlvDemux', 'init');
 	  }
-
 	  destroy() {
 	    super.destroy();
 	    this.input = null;
 	    this.flvDemux = null;
 	    this.player.debug.log('FlvDemux', 'destroy');
 	  }
-
 	  dispatch(data) {
 	    this.flvDemux(data);
 	  }
-
 	  *_inputFlv() {
 	    yield 9;
 	    const tmp = new ArrayBuffer(4);
 	    const tmp8 = new Uint8Array(tmp);
 	    const tmp32 = new Uint32Array(tmp);
 	    const player = this.player;
-
 	    while (true) {
 	      tmp8[3] = 0;
 	      const t = yield 15;
@@ -9381,67 +9072,54 @@
 	      tmp8[1] = t[9];
 	      tmp8[2] = t[8];
 	      let ts = tmp32[0];
-
 	      if (ts === 0xFFFFFF) {
 	        tmp8[3] = t[11];
 	        ts = tmp32[0];
 	      }
-
 	      const payload = yield length;
-
 	      switch (type) {
 	        case FLV_MEDIA_TYPE.audio:
 	          if (player._opt.hasAudio) {
 	            player.updateStats({
 	              abps: payload.byteLength
 	            });
-
 	            if (payload.byteLength > 0) {
 	              this._doDecode(payload, MEDIA_TYPE.audio, ts);
 	            }
 	          }
-
 	          break;
-
 	        case FLV_MEDIA_TYPE.video:
 	          if (!player._times.demuxStart) {
 	            player._times.demuxStart = now();
 	          }
-
 	          if (player._opt.hasVideo) {
 	            player.updateStats({
 	              vbps: payload.byteLength
 	            });
 	            const flags = payload[0];
-
 	            if (this._isEnhancedH265Header(flags)) {
 	              this._decodeEnhancedH265Video(payload, ts);
 	            } else {
 	              const isIFrame = payload[0] >> 4 === 1;
-
 	              if (payload.byteLength > 0) {
 	                tmp32[0] = payload[4];
 	                tmp32[1] = payload[3];
 	                tmp32[2] = payload[2];
 	                tmp32[3] = 0;
 	                let cts = tmp32[0];
-
 	                this._doDecode(payload, MEDIA_TYPE.video, ts, isIFrame, cts);
 	              }
 	            }
 	          }
-
 	          break;
 	      }
 	    }
 	  }
-
 	  dispatchFlvData(input) {
 	    let need = input.next();
 	    let buffer = null;
 	    return value => {
 	      let data = new Uint8Array(value);
-
 	      if (buffer) {
 	        let combine = new Uint8Array(buffer.length + data.length);
 	        combine.set(buffer);
@@ -9449,23 +9127,19 @@
 	        data = combine;
 	        buffer = null;
 	      }
-
 	      while (data.length >= need.value) {
 	        let remain = data.slice(need.value);
 	        need = input.next(data.slice(0, need.value));
 	        data = remain;
 	      }
-
 	      if (data.length > 0) {
 	        buffer = data;
 	      }
 	    };
 	  }
-
 	  close() {
 	    this.input && this.input.return(null);
 	  }
-
 	}
 
 	class M7sLoader extends CommonLoader {
@@ -9473,13 +9147,11 @@
 	    super(player);
 	    player.debug.log('M7sDemux', 'init');
 	  }
-
 	  destroy() {
 	    super.destroy();
 	    this.player.debug.log('M7sDemux', 'destroy');
 	    this.player = null;
 	  }
-
 	  dispatch(data) {
 	    const player = this.player;
 	    const dv = new DataView(data);
@@ -9487,7 +9159,6 @@
 	    const ts = dv.getUint32(1, false);
 	    const tmp = new ArrayBuffer(4);
 	    const tmp32 = new Uint32Array(tmp);
-
 	    switch (type) {
 	      case MEDIA_TYPE.audio:
 	        if (player._opt.hasAudio) {
@@ -9495,24 +9166,19 @@
 	          player.updateStats({
 	            abps: payload.byteLength
 	          });
-
 	          if (payload.byteLength > 0) {
 	            this._doDecode(payload, type, ts);
 	          }
 	        }
-
 	        break;
-
 	      case MEDIA_TYPE.video:
 	        if (player._opt.hasVideo) {
 	          if (!player._times.demuxStart) {
 	            player._times.demuxStart = now();
 	          }
-
 	          if (dv.byteLength > 5) {
 	            const payload = new Uint8Array(data, 5);
 	            const flags = payload[0];
-
 	            if (this._isEnhancedH265Header(flags)) {
 	              this._decodeEnhancedH265Video(payload, ts);
 	            } else {
@@ -9525,18 +9191,15 @@
 	              tmp32[2] = payload[2];
 	              tmp32[3] = 0;
 	              let cts = tmp32[0];
-
 	              this._doDecode(payload, type, ts, isIframe, cts);
 	            }
 	          } else {
 	            this.player.debug.warn('M7sDemux', 'dispatch', 'dv byteLength is', dv.byteLength);
 	          }
 	        }
-
 	        break;
 	    }
 	  }
-
 	}
 
 	class Demux {
@@ -9544,7 +9207,6 @@
 	    const Loader = Demux.getLoaderFactory(player._opt.demuxType);
 	    return new Loader(player);
 	  }
-
 	  static getLoaderFactory(type) {
 	    if (type === DEMUX_TYPE.m7s) {
 	      return M7sLoader;
@@ -9552,7 +9214,6 @@
 	      return FlvLoader;
 	    }
 	  }
-
 	}
 
 	/*
@@ -9572,6 +9233,7 @@
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
 	// Exponential-Golomb buffer decoder
 	class ExpGolomb {
 	  constructor(uint8array) {
@@ -9583,14 +9245,11 @@
 	    this._current_word = 0;
 	    this._current_word_bits_left = 0;
 	  }
-
 	  destroy() {
 	    this._buffer = null;
 	  }
-
 	  _fillCurrentWord() {
 	    let buffer_bytes_left = this._total_bytes - this._buffer_index;
-
 	    let bytes_read = Math.min(4, buffer_bytes_left);
 	    let word = new Uint8Array(4);
 	    word.set(this._buffer.subarray(this._buffer_index, this._buffer_index + bytes_read));
@@ -9598,22 +9257,17 @@
 	    this._buffer_index += bytes_read;
 	    this._current_word_bits_left = bytes_read * 8;
 	  }
-
 	  readBits(bits) {
-
 	    if (bits <= this._current_word_bits_left) {
 	      let result = this._current_word >>> 32 - bits;
 	      this._current_word <<= bits;
 	      this._current_word_bits_left -= bits;
 	      return result;
 	    }
-
 	    let result = this._current_word_bits_left ? this._current_word : 0;
 	    result = result >>> 32 - this._current_word_bits_left;
 	    let bits_need_left = bits - this._current_word_bits_left;
-
 	    this._fillCurrentWord();
-
 	    let bits_read_next = Math.min(bits_need_left, this._current_word_bits_left);
 	    let result2 = this._current_word >>> 32 - bits_read_next;
 	    this._current_word <<= bits_read_next;
@@ -9621,18 +9275,14 @@
 	    result = result << bits_read_next | result2;
 	    return result;
 	  }
-
 	  readBool() {
 	    return this.readBits(1) === 1;
 	  }
-
 	  readByte() {
 	    return this.readBits(8);
 	  }
-
 	  _skipLeadingZero() {
 	    let zero_count;
-
 	    for (zero_count = 0; zero_count < this._current_word_bits_left; zero_count++) {
 	      if (0 !== (this._current_word & 0x80000000 >>> zero_count)) {
 	        this._current_word <<= zero_count;
@@ -9640,30 +9290,23 @@
 	        return zero_count;
 	      }
 	    }
-
 	    this._fillCurrentWord();
-
 	    return zero_count + this._skipLeadingZero();
 	  }
-
 	  readUEG() {
 	    // unsigned exponential golomb
 	    let leading_zeros = this._skipLeadingZero();
-
 	    return this.readBits(leading_zeros + 1) - 1;
 	  }
-
 	  readSEG() {
 	    // signed exponential golomb
 	    let value = this.readUEG();
-
 	    if (value & 0x01) {
 	      return value + 1 >>> 1;
 	    } else {
 	      return -1 * (value >>> 1);
 	    }
 	  }
-
 	}
 
 	/*
@@ -9683,14 +9326,12 @@
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
 	class SPSParser {
 	  static _ebsp2rbsp(uint8array) {
 	    let src = uint8array;
 	    let src_length = src.byteLength;
 	    let dst = new Uint8Array(src_length);
 	    let dst_idx = 0;
-
 	    for (let i = 0; i < src_length; i++) {
 	      if (i >= 2) {
 	        // Unescape: Skip 0x03 after 00 00
@@ -9698,31 +9339,26 @@
 	          continue;
 	        }
 	      }
-
 	      dst[dst_idx] = src[i];
 	      dst_idx++;
 	    }
-
 	    return new Uint8Array(dst.buffer, 0, dst_idx);
-	  } // 解析 SPS
+	  }
+
+	  // 解析 SPS
 	  // https://zhuanlan.zhihu.com/p/27896239
-
-
 	  static parseSPS(uint8array) {
 	    let rbsp = SPSParser._ebsp2rbsp(uint8array);
-
 	    let gb = new ExpGolomb(rbsp);
-	    gb.readByte(); // 标识当前H.264码流的profile。
+	    gb.readByte();
+	    // 标识当前H.264码流的profile。
 	    // 我们知道，H.264中定义了三种常用的档次profile： 基准档次：baseline profile;主要档次：main profile; 扩展档次：extended profile;
 
 	    let profile_idc = gb.readByte(); // profile_idc
-
 	    gb.readByte(); // constraint_set_flags[5] + reserved_zero[3]
 	    // 标识当前码流的Level。编码的Level定义了某种条件下的最大视频分辨率、最大视频帧率等参数，码流所遵从的level由level_idc指定。
-
 	    let level_idc = gb.readByte(); // level_idc
 	    // 表示当前的序列参数集的id。通过该id值，图像参数集pps可以引用其代表的sps中的参数。
-
 	    gb.readUEG(); // seq_parameter_set_id
 
 	    let profile_string = SPSParser.getProfileString(profile_idc);
@@ -9730,12 +9366,12 @@
 	    let chroma_format_idc = 1;
 	    let chroma_format = 420;
 	    let chroma_format_table = [0, 420, 422, 444];
-	    let bit_depth = 8; //
+	    let bit_depth = 8;
 
+	    //
 	    if (profile_idc === 100 || profile_idc === 110 || profile_idc === 122 || profile_idc === 244 || profile_idc === 44 || profile_idc === 83 || profile_idc === 86 || profile_idc === 118 || profile_idc === 128 || profile_idc === 138 || profile_idc === 144) {
 	      //
 	      chroma_format_idc = gb.readUEG();
-
 	      if (chroma_format_idc === 3) {
 	        gb.readBits(1); // separate_colour_plane_flag
 	      }
@@ -9743,17 +9379,12 @@
 	      if (chroma_format_idc <= 3) {
 	        chroma_format = chroma_format_table[chroma_format_idc];
 	      }
-
 	      bit_depth = gb.readUEG() + 8; // bit_depth_luma_minus8
-
 	      gb.readUEG(); // bit_depth_chroma_minus8
-
 	      gb.readBits(1); // qpprime_y_zero_transform_bypass_flag
-
 	      if (gb.readBool()) {
 	        // seq_scaling_matrix_present_flag
 	        let scaling_list_count = chroma_format_idc !== 3 ? 8 : 12;
-
 	        for (let i = 0; i < scaling_list_count; i++) {
 	          if (gb.readBool()) {
 	            // seq_scaling_list_present_flag
@@ -9765,52 +9396,40 @@
 	          }
 	        }
 	      }
-	    } // 用于计算MaxFrameNum的值。计算公式为MaxFrameNum = 2^(log2_max_frame_num_minus4 +
-
-
+	    }
+	    // 用于计算MaxFrameNum的值。计算公式为MaxFrameNum = 2^(log2_max_frame_num_minus4 +
 	    gb.readUEG(); // log2_max_frame_num_minus4
 	    // 表示解码picture order count(POC)的方法。POC是另一种计量图像序号的方式，与frame_num有着不同的计算方法。该语法元素的取值为0、1或2。
-
 	    let pic_order_cnt_type = gb.readUEG();
-
 	    if (pic_order_cnt_type === 0) {
 	      gb.readUEG(); // log2_max_pic_order_cnt_lsb_minus_4
 	    } else if (pic_order_cnt_type === 1) {
 	      gb.readBits(1); // delta_pic_order_always_zero_flag
-
 	      gb.readSEG(); // offset_for_non_ref_pic
-
 	      gb.readSEG(); // offset_for_top_to_bottom_field
-
 	      let num_ref_frames_in_pic_order_cnt_cycle = gb.readUEG();
-
 	      for (let i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++) {
 	        gb.readSEG(); // offset_for_ref_frame
 	      }
-	    } // 用于表示参考帧的最大数目。
-
-
+	    }
+	    // 用于表示参考帧的最大数目。
 	    let ref_frames = gb.readUEG(); // max_num_ref_frames
 	    // 标识位，说明frame_num中是否允许不连续的值。
-
 	    gb.readBits(1); // gaps_in_frame_num_value_allowed_flag
 	    // 用于计算图像的宽度。单位为宏块个数，因此图像的实际宽度为:
-
-	    let pic_width_in_mbs_minus1 = gb.readUEG(); // 使用PicHeightInMapUnits来度量视频中一帧图像的高度。
+	    let pic_width_in_mbs_minus1 = gb.readUEG();
+	    // 使用PicHeightInMapUnits来度量视频中一帧图像的高度。
 	    // PicHeightInMapUnits并非图像明确的以像素或宏块为单位的高度，而需要考虑该宏块是帧编码或场编码。PicHeightInMapUnits的计算方式为：
-
-	    let pic_height_in_map_units_minus1 = gb.readUEG(); // 标识位，说明宏块的编码方式。当该标识位为0时，宏块可能为帧编码或场编码；
+	    let pic_height_in_map_units_minus1 = gb.readUEG();
+	    // 标识位，说明宏块的编码方式。当该标识位为0时，宏块可能为帧编码或场编码；
 	    // 该标识位为1时，所有宏块都采用帧编码。根据该标识位取值不同，PicHeightInMapUnits的含义也不同，
 	    // 为0时表示一场数据按宏块计算的高度，为1时表示一帧数据按宏块计算的高度。
-
 	    let frame_mbs_only_flag = gb.readBits(1);
-
 	    if (frame_mbs_only_flag === 0) {
 	      // 标识位，说明是否采用了宏块级的帧场自适应编码。当该标识位为0时，不存在帧编码和场编码之间的切换；当标识位为1时，宏块可能在帧编码和场编码模式之间进行选择。
 	      gb.readBits(1); // mb_adaptive_frame_field_flag
-	    } // 标识位，用于B_Skip、B_Direct模式运动矢量的推导计算。
-
-
+	    }
+	    // 标识位，用于B_Skip、B_Direct模式运动矢量的推导计算。
 	    gb.readBits(1); // direct_8x8_inference_flag
 
 	    let frame_crop_left_offset = 0;
@@ -9818,30 +9437,26 @@
 	    let frame_crop_top_offset = 0;
 	    let frame_crop_bottom_offset = 0;
 	    let frame_cropping_flag = gb.readBool();
-
 	    if (frame_cropping_flag) {
 	      frame_crop_left_offset = gb.readUEG();
 	      frame_crop_right_offset = gb.readUEG();
 	      frame_crop_top_offset = gb.readUEG();
 	      frame_crop_bottom_offset = gb.readUEG();
 	    }
-
 	    let sar_width = 1,
-	        sar_height = 1;
+	      sar_height = 1;
 	    let fps = 0,
-	        fps_fixed = true,
-	        fps_num = 0,
-	        fps_den = 0; // 标识位，说明SPS中是否存在VUI信息。
-
+	      fps_fixed = true,
+	      fps_num = 0,
+	      fps_den = 0;
+	    // 标识位，说明SPS中是否存在VUI信息。
 	    let vui_parameters_present_flag = gb.readBool();
-
 	    if (vui_parameters_present_flag) {
 	      if (gb.readBool()) {
 	        // aspect_ratio_info_present_flag
 	        let aspect_ratio_idc = gb.readByte();
 	        let sar_w_table = [1, 12, 10, 16, 40, 24, 20, 32, 80, 18, 15, 64, 160, 4, 3, 2];
 	        let sar_h_table = [1, 11, 11, 11, 33, 11, 11, 11, 33, 11, 11, 33, 99, 3, 2, 1];
-
 	        if (aspect_ratio_idc > 0 && aspect_ratio_idc < 16) {
 	          sar_width = sar_w_table[aspect_ratio_idc - 1];
 	          sar_height = sar_h_table[aspect_ratio_idc - 1];
@@ -9850,7 +9465,6 @@
 	          sar_height = gb.readByte() << 8 | gb.readByte();
 	        }
 	      }
-
 	      if (gb.readBool()) {
 	        // overscan_info_present_flag
 	        gb.readBool(); // overscan_appropriate_flag
@@ -9859,7 +9473,6 @@
 	      if (gb.readBool()) {
 	        // video_signal_type_present_flag
 	        gb.readBits(4); // video_format & video_full_range_flag
-
 	        if (gb.readBool()) {
 	          // colour_description_present_flag
 	          gb.readBits(24); // colour_primaries & transfer_characteristics & matrix_coefficients
@@ -9869,7 +9482,6 @@
 	      if (gb.readBool()) {
 	        // chroma_loc_info_present_flag
 	        gb.readUEG(); // chroma_sample_loc_type_top_field
-
 	        gb.readUEG(); // chroma_sample_loc_type_bottom_field
 	      }
 
@@ -9884,16 +9496,12 @@
 	        fps = fps_num / fps_den;
 	      }
 	    }
-
 	    let sarScale = 1;
-
 	    if (sar_width !== 1 || sar_height !== 1) {
 	      sarScale = sar_width / sar_height;
 	    }
-
 	    let crop_unit_x = 0,
-	        crop_unit_y = 0;
-
+	      crop_unit_y = 0;
 	    if (chroma_format_idc === 0) {
 	      crop_unit_x = 1;
 	      crop_unit_y = 2 - frame_mbs_only_flag;
@@ -9903,15 +9511,15 @@
 	      crop_unit_x = sub_wc;
 	      crop_unit_y = sub_hc * (2 - frame_mbs_only_flag);
 	    }
-
 	    let codec_width = (pic_width_in_mbs_minus1 + 1) * 16;
 	    let codec_height = (2 - frame_mbs_only_flag) * ((pic_height_in_map_units_minus1 + 1) * 16);
 	    codec_width -= (frame_crop_left_offset + frame_crop_right_offset) * crop_unit_x;
 	    codec_height -= (frame_crop_top_offset + frame_crop_bottom_offset) * crop_unit_y;
 	    let present_width = Math.ceil(codec_width * sarScale);
 	    gb.destroy();
-	    gb = null; // 解析出来的SPS 内容。
+	    gb = null;
 
+	    // 解析出来的SPS 内容。
 	    return {
 	      profile_string: profile_string,
 	      // baseline, high, high10, ...
@@ -9943,134 +9551,108 @@
 	      }
 	    };
 	  }
-
 	  static _skipScalingList(gb, count) {
 	    let last_scale = 8,
-	        next_scale = 8;
+	      next_scale = 8;
 	    let delta_scale = 0;
-
 	    for (let i = 0; i < count; i++) {
 	      if (next_scale !== 0) {
 	        delta_scale = gb.readSEG();
 	        next_scale = (last_scale + delta_scale + 256) % 256;
 	      }
-
 	      last_scale = next_scale === 0 ? last_scale : next_scale;
 	    }
-	  } // profile_idc = 66 → baseline profile;
+	  }
+
+	  // profile_idc = 66 → baseline profile;
 	  // profile_idc = 77 → main profile;
 	  // profile_idc = 88 → extended profile;
 	  // 在新版的标准中，还包括了High、High 10、High 4:2:2、High 4:4:4、High 10 Intra、High
 	  // 4:2:2 Intra、High 4:4:4 Intra、CAVLC 4:4:4 Intra
-
-
 	  static getProfileString(profile_idc) {
 	    switch (profile_idc) {
 	      case 66:
 	        return 'Baseline';
-
 	      case 77:
 	        return 'Main';
-
 	      case 88:
 	        return 'Extended';
-
 	      case 100:
 	        return 'High';
-
 	      case 110:
 	        return 'High10';
-
 	      case 122:
 	        return 'High422';
-
 	      case 244:
 	        return 'High444';
-
 	      default:
 	        return 'Unknown';
 	    }
 	  }
-
 	  static getLevelString(level_idc) {
 	    return (level_idc / 10).toFixed(1);
 	  }
-
 	  static getChromaFormatString(chroma) {
 	    switch (chroma) {
 	      case 420:
 	        return '4:2:0';
-
 	      case 422:
 	        return '4:2:2';
-
 	      case 444:
 	        return '4:4:4';
-
 	      default:
 	        return 'Unknown';
 	    }
 	  }
-
 	}
 
+	//
 	function parseAVCDecoderConfigurationRecord(arrayBuffer) {
 	  const meta = {};
 	  const v = new DataView(arrayBuffer.buffer);
 	  let version = v.getUint8(0); // configurationVersion
-
 	  let avcProfile = v.getUint8(1); // avcProfileIndication
-
 	  v.getUint8(2); // profile_compatibil
-
 	  v.getUint8(3); // AVCLevelIndication
 
 	  if (version !== 1 || avcProfile === 0) {
 	    // this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: Invalid AVCDecoderConfigurationRecord');
+
 	    return meta;
 	  }
-
 	  const _naluLengthSize = (v.getUint8(4) & 3) + 1; // lengthSizeMinusOne
-
 
 	  if (_naluLengthSize !== 3 && _naluLengthSize !== 4) {
 	    // holy shit!!!
 	    // this._onError(DemuxErrors.FORMAT_ERROR, `Flv: Strange NaluLengthSizeMinusOne: ${_naluLengthSize - 1}`);
 	    return meta;
 	  }
-
 	  let spsCount = v.getUint8(5) & 31; // numOfSequenceParameterSets
 
 	  if (spsCount === 0) {
 	    // this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: Invalid AVCDecoderConfigurationRecord: No SPS');
 	    return;
 	  }
-
 	  let offset = 6;
-
 	  for (let i = 0; i < spsCount; i++) {
 	    let len = v.getUint16(offset, false); // sequenceParameterSetLength
-
 	    offset += 2;
-
 	    if (len === 0) {
 	      continue;
-	    } // Notice: Nalu without startcode header (00 00 00 01)
+	    }
 
-
+	    // Notice: Nalu without startcode header (00 00 00 01)
 	    let sps = new Uint8Array(arrayBuffer.buffer, offset, len);
-	    offset += len; // flv.js作者选择了自己来解析这个数据结构，也是迫不得已，因为JS环境下没有ffmpeg，解析这个结构主要是为了提取 sps和pps。虽然理论上sps允许有多个，但其实一般就一个。
+	    offset += len;
+	    // flv.js作者选择了自己来解析这个数据结构，也是迫不得已，因为JS环境下没有ffmpeg，解析这个结构主要是为了提取 sps和pps。虽然理论上sps允许有多个，但其实一般就一个。
 	    // packetTtype 为 1 表示 NALU，NALU= network abstract layer unit，这是H.264的概念，网络抽象层数据单元，其实简单理解就是一帧视频数据。
 	    // pps的信息没什么用，所以作者只实现了sps的分析器，说明作者下了很大功夫去学习264的标准，其中的Golomb解码还是挺复杂的，能解对不容易，我在PC和手机平台都是用ffmpeg去解析的。
 	    // SPS里面包括了视频分辨率，帧率，profile level等视频重要信息。
-
 	    let config = SPSParser.parseSPS(sps);
-
 	    if (i !== 0) {
 	      // ignore other sps's config
 	      continue;
 	    }
-
 	    meta.codecWidth = config.codec_size.width;
 	    meta.codecHeight = config.codec_size.height;
 	    meta.presentWidth = config.present_size.width;
@@ -10081,56 +9663,44 @@
 	    meta.chromaFormat = config.chroma_format;
 	    meta.sarRatio = config.sar_ratio;
 	    meta.frameRate = config.frame_rate;
-
 	    if (config.frame_rate.fixed === false || config.frame_rate.fps_num === 0 || config.frame_rate.fps_den === 0) {
 	      meta.frameRate = {};
 	    }
-
 	    let fps_den = meta.frameRate.fps_den;
 	    let fps_num = meta.frameRate.fps_num;
 	    meta.refSampleDuration = meta.timescale * (fps_den / fps_num);
 	    let codecArray = sps.subarray(1, 4);
 	    let codecString = 'avc1.';
-
 	    for (let j = 0; j < 3; j++) {
 	      let h = codecArray[j].toString(16);
-
 	      if (h.length < 2) {
 	        h = '0' + h;
 	      }
-
 	      codecString += h;
-	    } // codec
-
-
+	    }
+	    // codec
 	    meta.codec = codecString;
 	  }
-
 	  let ppsCount = v.getUint8(offset); // numOfPictureParameterSets
-
 	  if (ppsCount === 0) {
 	    // this._onError(DemuxErrors.FORMAT_ERROR, 'Flv: Invalid AVCDecoderConfigurationRecord: No PPS');
 	    return meta;
 	  }
-
 	  offset++;
-
 	  for (let i = 0; i < ppsCount; i++) {
 	    let len = v.getUint16(offset, false); // pictureParameterSetLength
-
 	    offset += 2;
-
 	    if (len === 0) {
 	      continue;
 	    }
+	    new Uint8Array(arrayBuffer.buffer, offset, len);
 
-	    new Uint8Array(arrayBuffer.buffer, offset, len); // pps is useless for extracting video information
-
+	    // pps is useless for extracting video information
 	    offset += len;
 	  }
+	  meta.videoType = 'avc';
 
-	  meta.videoType = 'avc'; // meta.avcc = arrayBuffer;
-
+	  // meta.avcc = arrayBuffer;
 	  return meta;
 	}
 
@@ -10145,39 +9715,34 @@
 	    this.initDecoder();
 	    player.debug.log('Webcodecs', 'init');
 	  }
-
 	  destroy() {
 	    if (this.decoder) {
 	      if (this.decoder.state !== 'closed') {
 	        this.decoder.close();
 	      }
-
 	      this.decoder = null;
 	    }
-
 	    this.hasInit = false;
 	    this.isInitInfo = false;
 	    this.isDecodeFirstIIframe = false;
 	    this.off();
 	    this.player.debug.log('Webcodecs', 'destroy');
 	  }
-
 	  initDecoder() {
 	    const _this = this;
-
 	    this.decoder = new VideoDecoder({
 	      output(videoFrame) {
 	        _this.handleDecode(videoFrame);
 	      },
-
 	      error(error) {
 	        _this.handleError(error);
 	      }
-
 	    });
 	  }
-
 	  handleDecode(videoFrame) {
+	    if (this.player.isDestroyedOrClosed()) {
+	      return;
+	    }
 	    if (!this.isInitInfo) {
 	      this.player.video.updateVideoInfo({
 	        width: videoFrame.codedWidth,
@@ -10186,12 +9751,10 @@
 	      this.player.video.initCanvasViewSize();
 	      this.isInitInfo = true;
 	    }
-
 	    if (!this.player._times.videoStart) {
 	      this.player._times.videoStart = now();
 	      this.player.handlePlayToRenderTimes();
 	    }
-
 	    this.player.handleRender();
 	    this.player.video.render({
 	      videoFrame
@@ -10202,11 +9765,9 @@
 	      buf: this.player.demux.delay
 	    });
 	  }
-
 	  handleError(error) {
 	    this.player.debug.error('Webcodecs', 'VideoDecoder handleError', error);
 	  }
-
 	  decodeVideo(payload, ts, isIframe) {
 	    // this.player.debug.log('Webcodecs decoder', 'decodeVideo', ts, isIframe);
 	    if (!this.hasInit) {
@@ -10214,20 +9775,18 @@
 	        const videoCodec = payload[0] & 0x0F;
 	        this.player.video.updateVideoInfo({
 	          encTypeCode: videoCodec
-	        }); // 如果解码出来的是
+	        });
 
+	        // 如果解码出来的是
 	        if (videoCodec === VIDEO_ENC_CODE.h265) {
 	          this.emit(EVENTS_ERROR.webcodecsH265NotSupport);
 	          return;
 	        }
-
 	        if (!this.player._times.decodeStart) {
 	          this.player._times.decodeStart = now();
 	        }
-
 	        const config = formatVideoDecoderConfigure(payload.slice(5));
 	        this.player.debug.log('Webcodecs', 'VideoDecoder configure', config);
-
 	        try {
 	          this.decoder.configure(config);
 	        } catch (e) {
@@ -10235,7 +9794,6 @@
 	          this.player.emit(EVENTS_ERROR.webcodecsConfigureError);
 	          return;
 	        }
-
 	        this.hasInit = true;
 	      }
 	    } else {
@@ -10244,19 +9802,17 @@
 	        let data = payload.slice(5);
 	        const config = parseAVCDecoderConfigurationRecord(data);
 	        const videoInfo = this.player.video.videoInfo;
-
 	        if (config.codecWidth !== videoInfo.width || config.codecHeight !== videoInfo.height) {
 	          this.player.debug.log('Webcodecs', `width or height is update, width ${videoInfo.width}-> ${config.codecWidth}, height ${videoInfo.height}-> ${config.codecHeight}`);
 	          this.player.emit(EVENTS_ERROR.webcodecsWidthOrHeightChange);
 	          return;
 	        }
-	      } // fix : Uncaught DOMException: Failed to execute 'decode' on 'VideoDecoder': A key frame is required after configure() or flush().
+	      }
 
-
+	      // fix : Uncaught DOMException: Failed to execute 'decode' on 'VideoDecoder': A key frame is required after configure() or flush().
 	      if (!this.isDecodeFirstIIframe && isIframe) {
 	        this.isDecodeFirstIIframe = true;
 	      }
-
 	      if (this.isDecodeFirstIIframe) {
 	        const chunk = new EncodedVideoChunk({
 	          data: payload.slice(5),
@@ -10264,17 +9820,14 @@
 	          type: isIframe ? ENCODED_VIDEO_TYPE.key : ENCODED_VIDEO_TYPE.delta
 	        });
 	        this.player.emit(EVENTS.timeUpdate, ts);
-
 	        try {
 	          if (this.isDecodeStateClosed()) {
 	            this.player.debug.warn('Webcodecs', 'VideoDecoder isDecodeStateClosed true');
 	            return;
 	          }
-
 	          this.decoder.decode(chunk);
 	        } catch (e) {
 	          this.player.debug.error('Webcodecs', 'VideoDecoder', e);
-
 	          if (e.toString().indexOf(WCS_ERROR.keyframeIsRequiredError) !== -1) {
 	            this.player.emitError(EVENTS_ERROR.webcodecsDecodeError);
 	          } else if (e.toString().indexOf(WCS_ERROR.canNotDecodeClosedCodec) !== -1) {
@@ -10286,11 +9839,9 @@
 	      }
 	    }
 	  }
-
 	  isDecodeStateClosed() {
 	    return this.decoder.state === 'closed';
 	  }
-
 	}
 
 	const iconsMap = {
@@ -10319,7 +9870,6 @@
 	  } else {
 	    player.$container.classList.add('jessibuca-controls-show');
 	  }
-
 	  const options = player._opt;
 	  const operateBtns = options.operateBtns;
 	  player.$container.insertAdjacentHTML('beforeend', `
@@ -10477,7 +10027,6 @@
 	  player.on(EVENTS.destroy, () => {
 	    player.$container.removeChild(object);
 	  });
-
 	  function setVolumeHandle(percentage) {
 	    if (percentage === 0) {
 	      setStyle(control.$volumeOn, 'display', 'none');
@@ -10493,26 +10042,23 @@
 	        setStyle(control.$volumeOff, 'display', 'none');
 	      }
 	    }
-
 	    control.$volumePanelText && (control.$volumePanelText.innerHTML = parseInt(percentage * 100));
 	  }
-
 	  player.on(EVENTS.volumechange, () => {
 	    setVolumeHandle(player.volume);
 	  });
 	  player.on(EVENTS.loading, flag => {
 	    setStyle(control.$loading, 'display', flag ? 'flex' : 'none');
 	    setStyle(control.$poster, 'display', 'none');
-
 	    if (flag) {
 	      setStyle(control.$playBig, 'display', 'none');
 	    }
 	  });
-
 	  const screenfullChange = fullscreen => {
 	    let isFullScreen = isBoolean(fullscreen) ? fullscreen : player.fullscreen;
 	    setStyle(control.$fullscreenExit, 'display', isFullScreen ? 'flex' : 'none');
-	    setStyle(control.$fullscreen, 'display', isFullScreen ? 'none' : 'flex'); // control.autoSize();
+	    setStyle(control.$fullscreen, 'display', isFullScreen ? 'none' : 'flex');
+	    // control.autoSize();
 	  };
 
 	  const screenfullH5Control = () => {
@@ -10529,16 +10075,16 @@
 	      }, 10);
 	    }
 	  };
-
 	  try {
 	    screenfull.on('change', screenfullChange);
 	    player.events.destroys.push(() => {
 	      screenfull.off('change', screenfullChange);
 	    });
-	  } catch (error) {//
-	  } //
+	  } catch (error) {
+	    //
+	  }
 
-
+	  //
 	  player.on(EVENTS.webFullscreen, value => {
 	    screenfullChange(value);
 	    screenfullH5Control();
@@ -10547,12 +10093,12 @@
 	    setStyle(control.$record, 'display', player.recording ? 'none' : 'flex');
 	    setStyle(control.$recordStop, 'display', player.recording ? 'flex' : 'none');
 	    setStyle(control.$recording, 'display', player.recording ? 'flex' : 'none');
-
 	    if (!player.recording && control.$recordingTime) {
 	      control.$recordingTime.innerHTML = formatTimeTips(0);
 	    }
-	  }); //
+	  });
 
+	  //
 	  player.on(EVENTS.recordingTimestamp, timestamp => {
 	    // console.log(timestamp);
 	    control.$recordingTime && (control.$recordingTime.innerHTML = formatTimeTips(timestamp));
@@ -10564,10 +10110,10 @@
 	    setStyle(control.$screenshot, 'display', flag ? 'flex' : 'none');
 	    setStyle(control.$record, 'display', flag ? 'flex' : 'none');
 	    setStyle(control.$qualityMenu, 'display', flag ? 'flex' : 'none');
-	    setStyle(control.$volume, 'display', flag ? 'flex' : 'none'); // setStyle(control.$fullscreen, 'display', flag ? 'flex' : 'none');
-
-	    screenfullChange(); // 不在播放
-
+	    setStyle(control.$volume, 'display', flag ? 'flex' : 'none');
+	    // setStyle(control.$fullscreen, 'display', flag ? 'flex' : 'none');
+	    screenfullChange();
+	    // 不在播放
 	    if (!flag) {
 	      control.$speed && (control.$speed.innerHTML = bpsSize(''));
 	    }
@@ -10593,7 +10139,6 @@
 	    },
 	    debug
 	  } = player;
-
 	  function volumeChangeFromEvent(event) {
 	    const {
 	      bottom: panelBottom,
@@ -10602,23 +10147,26 @@
 	    const {
 	      height: handleHeight
 	    } = control.$volumeHandle.getBoundingClientRect();
-	    let moveLen = event.y; // if (isMobile() && player.fullscreen) {
+	    let moveLen = event.y;
+
+	    // if (isMobile() && player.fullscreen) {
 	    //     moveLen = event.x;
 	    // }
 
 	    const percentage = clamp(panelBottom - moveLen - handleHeight / 2, 0, panelHeight - handleHeight / 2) / (panelHeight - handleHeight);
 	    return percentage;
-	  } //
+	  }
 
-
+	  //
 	  proxy(window, ['click', 'contextmenu'], event => {
 	    if (event.composedPath().indexOf(player.$container) > -1) {
 	      control.isFocus = true;
 	    } else {
 	      control.isFocus = false;
 	    }
-	  }); //
+	  });
 
+	  //
 	  proxy(window, 'orientationchange', () => {
 	    setTimeout(() => {
 	      player.resize();
@@ -10629,13 +10177,14 @@
 	  });
 	  proxy(control.$pause, 'click', e => {
 	    player.pause();
-	  }); // 监听 play 方法
-
+	  });
+	  // 监听 play 方法
 	  proxy(control.$play, 'click', e => {
 	    player.play();
 	    player.resumeAudioAfterPause();
-	  }); // 监听 play 方法
+	  });
 
+	  // 监听 play 方法
 	  proxy(control.$playBig, 'click', e => {
 	    player.play();
 	    player.resumeAudioAfterPause();
@@ -10701,7 +10250,6 @@
 	    e.stopPropagation();
 	    player.fullscreen = false;
 	  });
-
 	  if (player._opt.hasControl && player._opt.controlAutoHide) {
 	    //
 	    proxy(player.$container, 'mouseover', () => {
@@ -10730,14 +10278,12 @@
 	      setStyle(control.$controls, 'display', 'none');
 	    });
 	    let delayHiddenTimeout = null;
-
 	    const startDelayControlHidden = () => {
 	      stopDelayControlHidden();
 	      delayHiddenTimeout = setTimeout(() => {
 	        setStyle(control.$controls, 'display', 'none');
 	      }, 5 * 1000);
 	    };
-
 	    const stopDelayControlHidden = () => {
 	      if (delayHiddenTimeout) {
 	        clearTimeout(delayHiddenTimeout);
@@ -10785,26 +10331,27 @@
 	    }
 	  } = player;
 	  const keys = {};
-
 	  function addHotkey(key, event) {
 	    if (keys[key]) {
 	      keys[key].push(event);
 	    } else {
 	      keys[key] = [event];
 	    }
-	  } //
+	  }
 
-
+	  //
 	  addHotkey(HOT_KEY.esc, () => {
 	    if (player.fullscreen) {
 	      player.fullscreen = false;
 	    }
-	  }); //
+	  });
 
+	  //
 	  addHotkey(HOT_KEY.arrowUp, () => {
 	    player.volume += 0.05;
-	  }); //
+	  });
 
+	  //
 	  addHotkey(HOT_KEY.arrowDown, () => {
 	    player.volume -= 0.05;
 	  });
@@ -10812,10 +10359,8 @@
 	    if (control.isFocus) {
 	      const tag = document.activeElement.tagName.toUpperCase();
 	      const editable = document.activeElement.getAttribute('contenteditable');
-
 	      if (tag !== 'INPUT' && tag !== 'TEXTAREA' && editable !== '' && editable !== 'true') {
 	        const events = keys[event.keyCode];
-
 	        if (events) {
 	          event.preventDefault();
 	          events.forEach(fn => fn());
@@ -10832,83 +10377,63 @@
 	    property(player, this);
 	    observer$1(player, this);
 	    events(player, this);
-
 	    if (player._opt.hotKey) {
 	      hotkey(player, this);
 	    }
-
 	    this.player.debug.log('Control', 'init');
 	  }
-
 	  destroy() {
 	    if (this.$poster) {
 	      const result = removeElement(this.$poster);
-
 	      if (!result) {
 	        const $poster = this.player.$container.querySelector('.jessibuca-poster');
-
 	        if ($poster && this.player.$container) {
 	          this.player.$container.removeChild($poster);
 	        }
 	      }
 	    }
-
 	    if (this.$loading) {
 	      const result = removeElement(this.$loading);
-
 	      if (!result) {
 	        const $loading = this.player.$container.querySelector('.jessibuca-loading');
-
 	        if ($loading && this.player.$container) {
 	          this.player.$container.removeChild($loading);
 	        }
 	      }
 	    }
-
 	    if (this.$controls) {
 	      const result = removeElement(this.$controls);
-
 	      if (!result) {
 	        const $controls = this.player.$container.querySelector('.jessibuca-controls');
-
 	        if ($controls && this.player.$container) {
 	          this.player.$container.removeChild($controls);
 	        }
 	      }
 	    }
-
 	    if (this.$recording) {
 	      const result = removeElement(this.$recording);
-
 	      if (!result) {
 	        const $recording = this.player.$container.querySelector('.jessibuca-recording');
-
 	        if ($recording && this.player.$container) {
 	          this.player.$container.removeChild($recording);
 	        }
 	      }
 	    }
-
 	    if (this.$playBig) {
 	      const result = removeElement(this.$playBig);
-
 	      if (!result) {
 	        const $playBig = this.player.$container.querySelector('.jessibuca-play-big');
-
 	        if ($playBig && this.player.$container) {
 	          this.player.$container.removeChild($playBig);
 	        }
 	      }
 	    }
-
 	    if (this.player.$container) {
 	      this.player.$container.classList.remove('jessibuca-controls-show-auto-hide');
 	      this.player.$container.classList.remove('jessibuca-controls-show');
 	    }
-
 	    this.player.debug.log('control', 'destroy');
 	  }
-
 	  autoSize() {
 	    const player = this.player;
 	    player.$container.style.padding = '0 0';
@@ -10918,7 +10443,6 @@
 	    const canvasWidth = player.video.$videoElement.width;
 	    const canvasHeight = player.video.$videoElement.height;
 	    const canvasRatio = canvasWidth / canvasHeight;
-
 	    if (playerRatio > canvasRatio) {
 	      const padding = (playerWidth - playerHeight * canvasRatio) / 2;
 	      player.$container.style.padding = `0 ${padding}px`;
@@ -10927,14 +10451,12 @@
 	      player.$container.style.padding = `${padding}px 0`;
 	    }
 	  }
-
 	  toggleBar(flag) {
 	    if (this.$controls) {
 	      if (!isBoolean(flag)) {
 	        // flag = this.$controls.style.display === 'none';
 	        flag = getStyle(this.$controls, 'display', false) === 'none';
 	      }
-
 	      if (flag) {
 	        setStyle(this.$controls, 'display', 'flex');
 	      } else {
@@ -10942,17 +10464,13 @@
 	      }
 	    }
 	  }
-
 	  getBarIsShow() {
 	    let result = false;
-
 	    if (this.$controls) {
 	      result = getStyle(this.$controls, 'display', false) !== 'none';
 	    }
-
 	    return result;
 	  }
-
 	}
 
 	var css_248z = ".jessibuca-container{position:relative;display:block;width:100%;height:100%;overflow:hidden}.jessibuca-container.jessibuca-fullscreen-web{position:fixed;z-index:9999;left:0;top:0;right:0;bottom:0;width:100vw!important;height:100vh!important;background:#000}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9wbGF5ZXIvc3R5bGUubGVzcyIsInN0eWxlLmxlc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEscUJBQ0ksaUJBQUEsQ0FDQSxhQUFBLENBQ0EsVUFBQSxDQUNBLFdBQUEsQ0FDQSxlQ0NKLENEQ0ksOENBQ0ksY0FBQSxDQUNBLFlBQUEsQ0FDQSxNQUFBLENBQ0EsS0FBQSxDQUNBLE9BQUEsQ0FDQSxRQUFBLENBQ0EscUJBQUEsQ0FDQSxzQkFBQSxDQUNBLGVDQ1IiLCJmaWxlIjoic3R5bGUubGVzcyJ9 */";
@@ -10966,30 +10484,27 @@
 	      proxy
 	    }
 	  } = player;
-
 	  if (_opt.supportDblclickFullscreen) {
 	    proxy(player.$container, 'dblclick', e => {
 	      const target = getTarget(e);
 	      const nodeName = target.nodeName.toLowerCase();
-
 	      if (nodeName === 'canvas' || nodeName === 'video') {
 	        player.fullscreen = !player.fullscreen;
 	      }
 	    });
-	  } //
+	  }
 
-
+	  //
 	  proxy(document, 'visibilitychange', () => {
 	    if (_opt.hiddenAutoPause) {
 	      debug.log('visibilitychange', document.visibilityState, player._isPlayingBeforePageHidden);
-
 	      if ("visible" === document.visibilityState) {
 	        if (player._isPlayingBeforePageHidden) {
 	          player.play();
 	        }
 	      } else {
-	        player._isPlayingBeforePageHidden = player.playing; // hidden
-
+	        player._isPlayingBeforePageHidden = player.playing;
+	        // hidden
 	        if (player.playing) {
 	          player.pause();
 	        }
@@ -11044,90 +10559,114 @@
 	      vmhd: [],
 	      smhd: []
 	    };
-
 	    for (let name in MP4$1.types) {
 	      if (MP4$1.types.hasOwnProperty(name)) {
 	        MP4$1.types[name] = [name.charCodeAt(0), name.charCodeAt(1), name.charCodeAt(2), name.charCodeAt(3)];
 	      }
 	    }
-
 	    let constants = MP4$1.constants = {};
-	    constants.FTYP = new Uint8Array([0x69, 0x73, 0x6F, 0x6D, // major_brand: isom
-	    0x0, 0x0, 0x0, 0x1, // minor_version: 0x01
-	    0x69, 0x73, 0x6F, 0x6D, // isom
+	    constants.FTYP = new Uint8Array([0x69, 0x73, 0x6F, 0x6D,
+	    // major_brand: isom
+	    0x0, 0x0, 0x0, 0x1,
+	    // minor_version: 0x01
+	    0x69, 0x73, 0x6F, 0x6D,
+	    // isom
 	    0x61, 0x76, 0x63, 0x31 // avc1
 	    ]);
-	    constants.STSD_PREFIX = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
+
+	    constants.STSD_PREFIX = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
 	    0x00, 0x00, 0x00, 0x01 // entry_count
 	    ]);
-	    constants.STTS = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
+
+	    constants.STTS = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
 	    0x00, 0x00, 0x00, 0x00 // entry_count
 	    ]);
+
 	    constants.STSC = constants.STCO = constants.STTS;
-	    constants.STSZ = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // sample_size
+	    constants.STSZ = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // sample_size
 	    0x00, 0x00, 0x00, 0x00 // sample_count
 	    ]);
-	    constants.HDLR_VIDEO = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // pre_defined
-	    0x76, 0x69, 0x64, 0x65, // handler_type: 'vide'
-	    0x00, 0x00, 0x00, 0x00, // reserved: 3 * 4 bytes
+
+	    constants.HDLR_VIDEO = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // pre_defined
+	    0x76, 0x69, 0x64, 0x65,
+	    // handler_type: 'vide'
+	    0x00, 0x00, 0x00, 0x00,
+	    // reserved: 3 * 4 bytes
 	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x56, 0x69, 0x64, 0x65, 0x6F, 0x48, 0x61, 0x6E, 0x64, 0x6C, 0x65, 0x72, 0x00 // name: VideoHandler
 	    ]);
-	    constants.HDLR_AUDIO = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // pre_defined
-	    0x73, 0x6F, 0x75, 0x6E, // handler_type: 'soun'
-	    0x00, 0x00, 0x00, 0x00, // reserved: 3 * 4 bytes
+
+	    constants.HDLR_AUDIO = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // pre_defined
+	    0x73, 0x6F, 0x75, 0x6E,
+	    // handler_type: 'soun'
+	    0x00, 0x00, 0x00, 0x00,
+	    // reserved: 3 * 4 bytes
 	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x6F, 0x75, 0x6E, 0x64, 0x48, 0x61, 0x6E, 0x64, 0x6C, 0x65, 0x72, 0x00 // name: SoundHandler
 	    ]);
-	    constants.DREF = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x01, // entry_count
-	    0x00, 0x00, 0x00, 0x0C, // entry_size
-	    0x75, 0x72, 0x6C, 0x20, // type 'url '
+
+	    constants.DREF = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x01,
+	    // entry_count
+	    0x00, 0x00, 0x00, 0x0C,
+	    // entry_size
+	    0x75, 0x72, 0x6C, 0x20,
+	    // type 'url '
 	    0x00, 0x00, 0x00, 0x01 // version(0) + flags
-	    ]); // Sound media header
+	    ]);
 
-	    constants.SMHD = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
+	    // Sound media header
+	    constants.SMHD = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
 	    0x00, 0x00, 0x00, 0x00 // balance(2) + reserved(2)
-	    ]); // video media header
+	    ]);
 
-	    constants.VMHD = new Uint8Array([0x00, 0x00, 0x00, 0x01, // version(0) + flags
-	    0x00, 0x00, // graphicsmode: 2 bytes
-	    0x00, 0x00, 0x00, 0x00, // opcolor: 3 * 2 bytes
+	    // video media header
+	    constants.VMHD = new Uint8Array([0x00, 0x00, 0x00, 0x01,
+	    // version(0) + flags
+	    0x00, 0x00,
+	    // graphicsmode: 2 bytes
+	    0x00, 0x00, 0x00, 0x00,
+	    // opcolor: 3 * 2 bytes
 	    0x00, 0x00]);
-	  } // Generate a box
+	  }
 
-
+	  // Generate a box
 	  static box(type) {
 	    let size = 8;
 	    let result = null;
 	    let datas = Array.prototype.slice.call(arguments, 1);
 	    let arrayCount = datas.length;
-
 	    for (let i = 0; i < arrayCount; i++) {
 	      size += datas[i].byteLength;
 	    }
-
 	    result = new Uint8Array(size);
 	    result[0] = size >>> 24 & 0xFF; // size
-
 	    result[1] = size >>> 16 & 0xFF;
 	    result[2] = size >>> 8 & 0xFF;
 	    result[3] = size & 0xFF;
 	    result.set(type, 4); // type
 
 	    let offset = 8;
-
 	    for (let i = 0; i < arrayCount; i++) {
 	      // data body
 	      result.set(datas[i], offset);
 	      offset += datas[i].byteLength;
 	    }
-
 	    return result;
-	  } // emit ftyp & moov
+	  }
 
-
+	  // emit ftyp & moov
 	  static generateInitSegment(meta) {
 	    let ftyp = MP4$1.box(MP4$1.types.ftyp, MP4$1.constants.FTYP);
 	    let moov = MP4$1.moov(meta);
@@ -11135,123 +10674,154 @@
 	    result.set(ftyp, 0);
 	    result.set(moov, ftyp.byteLength);
 	    return result;
-	  } // Movie metadata box
+	  }
 
-
+	  // Movie metadata box
 	  static moov(meta) {
 	    let mvhd = MP4$1.mvhd(meta.timescale, meta.duration);
 	    let trak = MP4$1.trak(meta);
 	    let mvex = MP4$1.mvex(meta);
 	    return MP4$1.box(MP4$1.types.moov, mvhd, trak, mvex);
-	  } // Movie header box
-
-
-	  static mvhd(timescale, duration) {
-	    return MP4$1.box(MP4$1.types.mvhd, new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // creation_time
-	    0x00, 0x00, 0x00, 0x00, // modification_time
-	    timescale >>> 24 & 0xFF, // timescale: 4 bytes
-	    timescale >>> 16 & 0xFF, timescale >>> 8 & 0xFF, timescale & 0xFF, duration >>> 24 & 0xFF, // duration: 4 bytes
-	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x00, 0x01, 0x00, 0x00, // Preferred rate: 1.0
-	    0x01, 0x00, 0x00, 0x00, // PreferredVolume(1.0, 2bytes) + reserved(2bytes)
-	    0x00, 0x00, 0x00, 0x00, // reserved: 4 + 4 bytes
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, // ----begin composition matrix----
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, // ----end composition matrix----
-	    0x00, 0x00, 0x00, 0x00, // ----begin pre_defined 6 * 4 bytes----
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ----end pre_defined 6 * 4 bytes----
-	    0xFF, 0xFF, 0xFF, 0xFF // next_track_ID
-	    ]));
-	  } // Track box
-
-
-	  static trak(meta) {
-	    return MP4$1.box(MP4$1.types.trak, MP4$1.tkhd(meta), MP4$1.mdia(meta));
-	  } // Track header box
-
-
-	  static tkhd(meta) {
-	    let trackId = meta.id,
-	        duration = meta.duration;
-	    let width = meta.presentWidth,
-	        height = meta.presentHeight;
-	    return MP4$1.box(MP4$1.types.tkhd, new Uint8Array([0x00, 0x00, 0x00, 0x07, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // creation_time
-	    0x00, 0x00, 0x00, 0x00, // modification_time
-	    trackId >>> 24 & 0xFF, // track_ID: 4 bytes
-	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF, 0x00, 0x00, 0x00, 0x00, // reserved: 4 bytes
-	    duration >>> 24 & 0xFF, // duration: 4 bytes
-	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x00, 0x00, 0x00, 0x00, // reserved: 2 * 4 bytes
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // layer(2bytes) + alternate_group(2bytes)
-	    0x00, 0x00, 0x00, 0x00, // volume(2bytes) + reserved(2bytes)
-	    0x00, 0x01, 0x00, 0x00, // ----begin composition matrix----
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, // ----end composition matrix----
-	    width >>> 8 & 0xFF, // width and height
-	    width & 0xFF, 0x00, 0x00, height >>> 8 & 0xFF, height & 0xFF, 0x00, 0x00]));
 	  }
 
+	  // Movie header box
+	  static mvhd(timescale, duration) {
+	    return MP4$1.box(MP4$1.types.mvhd, new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // creation_time
+	    0x00, 0x00, 0x00, 0x00,
+	    // modification_time
+	    timescale >>> 24 & 0xFF,
+	    // timescale: 4 bytes
+	    timescale >>> 16 & 0xFF, timescale >>> 8 & 0xFF, timescale & 0xFF, duration >>> 24 & 0xFF,
+	    // duration: 4 bytes
+	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x00, 0x01, 0x00, 0x00,
+	    // Preferred rate: 1.0
+	    0x01, 0x00, 0x00, 0x00,
+	    // PreferredVolume(1.0, 2bytes) + reserved(2bytes)
+	    0x00, 0x00, 0x00, 0x00,
+	    // reserved: 4 + 4 bytes
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+	    // ----begin composition matrix----
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+	    // ----end composition matrix----
+	    0x00, 0x00, 0x00, 0x00,
+	    // ----begin pre_defined 6 * 4 bytes----
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	    // ----end pre_defined 6 * 4 bytes----
+	    0xFF, 0xFF, 0xFF, 0xFF // next_track_ID
+	    ]));
+	  }
+
+	  // Track box
+	  static trak(meta) {
+	    return MP4$1.box(MP4$1.types.trak, MP4$1.tkhd(meta), MP4$1.mdia(meta));
+	  }
+
+	  // Track header box
+	  static tkhd(meta) {
+	    let trackId = meta.id,
+	      duration = meta.duration;
+	    let width = meta.presentWidth,
+	      height = meta.presentHeight;
+	    return MP4$1.box(MP4$1.types.tkhd, new Uint8Array([0x00, 0x00, 0x00, 0x07,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // creation_time
+	    0x00, 0x00, 0x00, 0x00,
+	    // modification_time
+	    trackId >>> 24 & 0xFF,
+	    // track_ID: 4 bytes
+	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF, 0x00, 0x00, 0x00, 0x00,
+	    // reserved: 4 bytes
+	    duration >>> 24 & 0xFF,
+	    // duration: 4 bytes
+	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x00, 0x00, 0x00, 0x00,
+	    // reserved: 2 * 4 bytes
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	    // layer(2bytes) + alternate_group(2bytes)
+	    0x00, 0x00, 0x00, 0x00,
+	    // volume(2bytes) + reserved(2bytes)
+	    0x00, 0x01, 0x00, 0x00,
+	    // ----begin composition matrix----
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+	    // ----end composition matrix----
+	    width >>> 8 & 0xFF,
+	    // width and height
+	    width & 0xFF, 0x00, 0x00, height >>> 8 & 0xFF, height & 0xFF, 0x00, 0x00]));
+	  }
 	  static mdia(meta) {
 	    return MP4$1.box(MP4$1.types.mdia, MP4$1.mdhd(meta), MP4$1.hdlr(meta), MP4$1.minf(meta));
-	  } // Media header box
+	  }
 
-
+	  // Media header box
 	  static mdhd(meta) {
 	    let timescale = meta.timescale;
 	    let duration = meta.duration;
-	    return MP4$1.box(MP4$1.types.mdhd, new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    0x00, 0x00, 0x00, 0x00, // creation_time
-	    0x00, 0x00, 0x00, 0x00, // modification_time
-	    timescale >>> 24 & 0xFF, // timescale: 4 bytes
-	    timescale >>> 16 & 0xFF, timescale >>> 8 & 0xFF, timescale & 0xFF, duration >>> 24 & 0xFF, // duration: 4 bytes
-	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x55, 0xC4, // language: und (undetermined)
+	    return MP4$1.box(MP4$1.types.mdhd, new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    0x00, 0x00, 0x00, 0x00,
+	    // creation_time
+	    0x00, 0x00, 0x00, 0x00,
+	    // modification_time
+	    timescale >>> 24 & 0xFF,
+	    // timescale: 4 bytes
+	    timescale >>> 16 & 0xFF, timescale >>> 8 & 0xFF, timescale & 0xFF, duration >>> 24 & 0xFF,
+	    // duration: 4 bytes
+	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, 0x55, 0xC4,
+	    // language: und (undetermined)
 	    0x00, 0x00 // pre_defined = 0
 	    ]));
-	  } // Media handler reference box
+	  }
 
-
+	  // Media handler reference box
 	  static hdlr(meta) {
 	    let data = null;
-
 	    if (meta.type === 'audio') {
 	      data = MP4$1.constants.HDLR_AUDIO;
 	    } else {
 	      data = MP4$1.constants.HDLR_VIDEO;
 	    }
-
 	    return MP4$1.box(MP4$1.types.hdlr, data);
-	  } // Media infomation box
+	  }
 
-
+	  // Media infomation box
 	  static minf(meta) {
 	    let xmhd = null;
-
 	    if (meta.type === 'audio') {
 	      xmhd = MP4$1.box(MP4$1.types.smhd, MP4$1.constants.SMHD);
 	    } else {
 	      xmhd = MP4$1.box(MP4$1.types.vmhd, MP4$1.constants.VMHD);
 	    }
-
 	    return MP4$1.box(MP4$1.types.minf, xmhd, MP4$1.dinf(), MP4$1.stbl(meta));
-	  } // Data infomation box
+	  }
 
-
+	  // Data infomation box
 	  static dinf() {
 	    let result = MP4$1.box(MP4$1.types.dinf, MP4$1.box(MP4$1.types.dref, MP4$1.constants.DREF));
 	    return result;
-	  } // Sample table box
+	  }
 
-
+	  // Sample table box
 	  static stbl(meta) {
-	    let result = MP4$1.box(MP4$1.types.stbl, // type: stbl
-	    MP4$1.stsd(meta), // Sample Description Table
-	    MP4$1.box(MP4$1.types.stts, MP4$1.constants.STTS), // Time-To-Sample
-	    MP4$1.box(MP4$1.types.stsc, MP4$1.constants.STSC), // Sample-To-Chunk
-	    MP4$1.box(MP4$1.types.stsz, MP4$1.constants.STSZ), // Sample size
+	    let result = MP4$1.box(MP4$1.types.stbl,
+	    // type: stbl
+	    MP4$1.stsd(meta),
+	    // Sample Description Table
+	    MP4$1.box(MP4$1.types.stts, MP4$1.constants.STTS),
+	    // Time-To-Sample
+	    MP4$1.box(MP4$1.types.stsc, MP4$1.constants.STSC),
+	    // Sample-To-Chunk
+	    MP4$1.box(MP4$1.types.stsz, MP4$1.constants.STSZ),
+	    // Sample size
 	    MP4$1.box(MP4$1.types.stco, MP4$1.constants.STCO) // Chunk offset
 	    );
+
 	    return result;
-	  } // Sample description box
+	  }
 
-
+	  // Sample description box
 	  static stsd(meta) {
 	    if (meta.type === 'audio') {
 	      // else: aac -> mp4a
@@ -11266,143 +10836,179 @@
 	      }
 	    }
 	  }
-
 	  static mp4a(meta) {
 	    let channelCount = meta.channelCount;
 	    let sampleRate = meta.audioSampleRate;
-	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00, // reserved(4)
-	    0x00, 0x00, 0x00, 0x01, // reserved(2) + data_reference_index(2)
-	    0x00, 0x00, 0x00, 0x00, // reserved: 2 * 4 bytes
-	    0x00, 0x00, 0x00, 0x00, 0x00, channelCount, // channelCount(2)
-	    0x00, 0x10, // sampleSize(2)
-	    0x00, 0x00, 0x00, 0x00, // reserved(4)
-	    sampleRate >>> 8 & 0xFF, // Audio sample rate
+	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // reserved(4)
+	    0x00, 0x00, 0x00, 0x01,
+	    // reserved(2) + data_reference_index(2)
+	    0x00, 0x00, 0x00, 0x00,
+	    // reserved: 2 * 4 bytes
+	    0x00, 0x00, 0x00, 0x00, 0x00, channelCount,
+	    // channelCount(2)
+	    0x00, 0x10,
+	    // sampleSize(2)
+	    0x00, 0x00, 0x00, 0x00,
+	    // reserved(4)
+	    sampleRate >>> 8 & 0xFF,
+	    // Audio sample rate
 	    sampleRate & 0xFF, 0x00, 0x00]);
 	    return MP4$1.box(MP4$1.types.mp4a, data, MP4$1.esds(meta));
 	  }
-
 	  static esds(meta) {
 	    let config = meta.config || [];
 	    let configSize = config.length;
-	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version 0 + flags
-	    0x03, // descriptor_type
-	    0x17 + configSize, // length3
-	    0x00, 0x01, // es_id
-	    0x00, // stream_priority
-	    0x04, // descriptor_type
-	    0x0F + configSize, // length
-	    0x40, // codec: mpeg4_audio
-	    0x15, // stream_type: Audio
-	    0x00, 0x00, 0x00, // buffer_size
-	    0x00, 0x00, 0x00, 0x00, // maxBitrate
-	    0x00, 0x00, 0x00, 0x00, // avgBitrate
+	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version 0 + flags
+
+	    0x03,
+	    // descriptor_type
+	    0x17 + configSize,
+	    // length3
+	    0x00, 0x01,
+	    // es_id
+	    0x00,
+	    // stream_priority
+
+	    0x04,
+	    // descriptor_type
+	    0x0F + configSize,
+	    // length
+	    0x40,
+	    // codec: mpeg4_audio
+	    0x15,
+	    // stream_type: Audio
+	    0x00, 0x00, 0x00,
+	    // buffer_size
+	    0x00, 0x00, 0x00, 0x00,
+	    // maxBitrate
+	    0x00, 0x00, 0x00, 0x00,
+	    // avgBitrate
+
 	    0x05 // descriptor_type
 	    ].concat([configSize]).concat(config).concat([0x06, 0x01, 0x02 // GASpecificConfig
 	    ]));
+
 	    return MP4$1.box(MP4$1.types.esds, data);
-	  } // avc
+	  }
 
-
+	  // avc
 	  static avc1(meta) {
 	    let avcc = meta.avcc;
 	    const width = meta.codecWidth;
 	    const height = meta.codecHeight;
 	    let data = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, width >>> 8 & 255, width & 255, height >>> 8 & 255, height & 255, 0, 72, 0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 255, 255]);
 	    return MP4$1.box(MP4$1.types.avc1, data, MP4$1.box(MP4$1.types.avcC, avcc));
-	  } // hvc
+	  }
 
-
+	  // hvc
 	  static hvc1(meta) {
 	    let avcc = meta.avcc;
 	    const width = meta.codecWidth;
 	    const height = meta.codecHeight;
 	    let data = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, width >>> 8 & 255, width & 255, height >>> 8 & 255, height & 255, 0, 72, 0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 255, 255]);
 	    return MP4$1.box(MP4$1.types.hvc1, data, MP4$1.box(MP4$1.types.hvcC, avcc));
-	  } // Movie Extends box
+	  }
 
-
+	  // Movie Extends box
 	  static mvex(meta) {
 	    return MP4$1.box(MP4$1.types.mvex, MP4$1.trex(meta));
-	  } // Track Extends box
+	  }
 
-
+	  // Track Extends box
 	  static trex(meta) {
 	    let trackId = meta.id;
-	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) + flags
-	    trackId >>> 24 & 0xFF, // track_ID
-	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF, 0x00, 0x00, 0x00, 0x01, // default_sample_description_index
-	    0x00, 0x00, 0x00, 0x00, // default_sample_duration
-	    0x00, 0x00, 0x00, 0x00, // default_sample_size
+	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) + flags
+	    trackId >>> 24 & 0xFF,
+	    // track_ID
+	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF, 0x00, 0x00, 0x00, 0x01,
+	    // default_sample_description_index
+	    0x00, 0x00, 0x00, 0x00,
+	    // default_sample_duration
+	    0x00, 0x00, 0x00, 0x00,
+	    // default_sample_size
 	    0x00, 0x01, 0x00, 0x01 // default_sample_flags
 	    ]);
+
 	    return MP4$1.box(MP4$1.types.trex, data);
-	  } // Movie fragment box
+	  }
 
-
+	  // Movie fragment box
 	  static moof(track, baseMediaDecodeTime) {
 	    return MP4$1.box(MP4$1.types.moof, MP4$1.mfhd(track.sequenceNumber), MP4$1.traf(track, baseMediaDecodeTime));
-	  } //
-
-
+	  }
+	  //
 	  static mfhd(sequenceNumber) {
-	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00, sequenceNumber >>> 24 & 0xFF, // sequence_number: int32
+	    let data = new Uint8Array([0x00, 0x00, 0x00, 0x00, sequenceNumber >>> 24 & 0xFF,
+	    // sequence_number: int32
 	    sequenceNumber >>> 16 & 0xFF, sequenceNumber >>> 8 & 0xFF, sequenceNumber & 0xFF]);
 	    return MP4$1.box(MP4$1.types.mfhd, data);
-	  } // Track fragment box
+	  }
 
-
+	  // Track fragment box
 	  static traf(track, baseMediaDecodeTime) {
-	    let trackId = track.id; // Track fragment header box
+	    let trackId = track.id;
 
-	    let tfhd = MP4$1.box(MP4$1.types.tfhd, new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) & flags
-	    trackId >>> 24 & 0xFF, // track_ID
-	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF])); // Track Fragment Decode Time
-
-	    let tfdt = MP4$1.box(MP4$1.types.tfdt, new Uint8Array([0x00, 0x00, 0x00, 0x00, // version(0) & flags
-	    baseMediaDecodeTime >>> 24 & 0xFF, // baseMediaDecodeTime: int32
+	    // Track fragment header box
+	    let tfhd = MP4$1.box(MP4$1.types.tfhd, new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) & flags
+	    trackId >>> 24 & 0xFF,
+	    // track_ID
+	    trackId >>> 16 & 0xFF, trackId >>> 8 & 0xFF, trackId & 0xFF]));
+	    // Track Fragment Decode Time
+	    let tfdt = MP4$1.box(MP4$1.types.tfdt, new Uint8Array([0x00, 0x00, 0x00, 0x00,
+	    // version(0) & flags
+	    baseMediaDecodeTime >>> 24 & 0xFF,
+	    // baseMediaDecodeTime: int32
 	    baseMediaDecodeTime >>> 16 & 0xFF, baseMediaDecodeTime >>> 8 & 0xFF, baseMediaDecodeTime & 0xFF]));
 	    let sdtp = MP4$1.sdtp(track);
 	    let trun = MP4$1.trun(track, sdtp.byteLength + 16 + 16 + 8 + 16 + 8 + 8);
 	    return MP4$1.box(MP4$1.types.traf, tfhd, tfdt, trun, sdtp);
-	  } // Sample Dependency Type box
+	  }
 
-
+	  // Sample Dependency Type box
 	  static sdtp(track) {
 	    let data = new Uint8Array(4 + 1);
 	    let flags = track.flags;
 	    data[4] = flags.isLeading << 6 | flags.dependsOn << 4 | flags.isDependedOn << 2 | flags.hasRedundancy;
 	    return MP4$1.box(MP4$1.types.sdtp, data);
-	  } // trun
-
-
+	  }
+	  // trun
 	  static trun(track, offset) {
 	    let dataSize = 12 + 16;
 	    let data = new Uint8Array(dataSize);
 	    offset += 8 + dataSize;
-	    data.set([0x00, 0x00, 0x0F, 0x01, // version(0) & flags
-	    0x00, 0x00, 0x00, 0x01, // sample_count
-	    offset >>> 24 & 0xFF, // data_offset
+	    data.set([0x00, 0x00, 0x0F, 0x01,
+	    // version(0) & flags
+	    0x00, 0x00, 0x00, 0x01,
+	    // sample_count
+	    offset >>> 24 & 0xFF,
+	    // data_offset
 	    offset >>> 16 & 0xFF, offset >>> 8 & 0xFF, offset & 0xFF], 0);
 	    let duration = track.duration;
 	    let size = track.size;
 	    let flags = track.flags;
 	    let cts = track.cts;
-	    data.set([duration >>> 24 & 0xFF, // sample_duration
-	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, size >>> 24 & 0xFF, // sample_size
-	    size >>> 16 & 0xFF, size >>> 8 & 0xFF, size & 0xFF, flags.isLeading << 2 | flags.dependsOn, // sample_flags
-	    flags.isDependedOn << 6 | flags.hasRedundancy << 4 | flags.isNonSync, 0x00, 0x00, // sample_degradation_priority
-	    cts >>> 24 & 0xFF, // sample_composition_time_offset
+	    data.set([duration >>> 24 & 0xFF,
+	    // sample_duration
+	    duration >>> 16 & 0xFF, duration >>> 8 & 0xFF, duration & 0xFF, size >>> 24 & 0xFF,
+	    // sample_size
+	    size >>> 16 & 0xFF, size >>> 8 & 0xFF, size & 0xFF, flags.isLeading << 2 | flags.dependsOn,
+	    // sample_flags
+	    flags.isDependedOn << 6 | flags.hasRedundancy << 4 | flags.isNonSync, 0x00, 0x00,
+	    // sample_degradation_priority
+	    cts >>> 24 & 0xFF,
+	    // sample_composition_time_offset
 	    cts >>> 16 & 0xFF, cts >>> 8 & 0xFF, cts & 0xFF], 12);
 	    return MP4$1.box(MP4$1.types.trun, data);
-	  } // mdat
-
-
+	  }
+	  // mdat
 	  static mdat(data) {
 	    return MP4$1.box(MP4$1.types.mdat, data);
 	  }
-
 	}
-
 	MP4$1.init();
 
 	class MseDecoder extends Emitter {
@@ -11439,7 +11045,6 @@
 	    });
 	    player.debug.log('MediaSource', 'init');
 	  }
-
 	  destroy() {
 	    this.stop();
 	    this.mediaSource = null;
@@ -11456,88 +11061,71 @@
 	    this.off();
 	    this.player.debug.log('MediaSource', 'destroy');
 	  }
-
 	  get state() {
 	    return this.mediaSource && this.mediaSource.readyState;
 	  }
-
 	  get isStateOpen() {
 	    return this.state === MEDIA_SOURCE_STATE.open;
 	  }
-
 	  get isStateClosed() {
 	    return this.state === MEDIA_SOURCE_STATE.closed;
 	  }
-
 	  get isStateEnded() {
 	    return this.state === MEDIA_SOURCE_STATE.ended;
 	  }
-
 	  get duration() {
 	    return this.mediaSource && this.mediaSource.duration;
 	  }
-
 	  set duration(duration) {
 	    this.mediaSource.duration = duration;
 	  }
-
 	  decodeVideo(payload, ts, isIframe, cts) {
 	    const player = this.player;
-
-	    if (!player) {
+	    if (!player || player && player.isDestroyedOrClosed()) {
 	      return;
 	    }
-
 	    if (!this.hasInit) {
 	      if (isIframe && payload[1] === 0) {
 	        const videoCodec = payload[0] & 0x0F;
 	        player.video.updateVideoInfo({
 	          encTypeCode: videoCodec
-	        }); // 如果解码出来的是
+	        });
 
+	        // 如果解码出来的是
 	        if (videoCodec === VIDEO_ENC_CODE.h265) {
 	          this.emit(EVENTS_ERROR.mediaSourceH265NotSupport);
 	          return;
 	        }
-
 	        if (!player._times.decodeStart) {
 	          player._times.decodeStart = now();
 	        }
-
 	        this._decodeConfigurationRecord(payload, ts, isIframe, videoCodec);
-
 	        this.hasInit = true;
 	      }
 	    } else {
 	      if (isIframe && payload[1] === 0) {
 	        let config = parseAVCDecoderConfigurationRecord(payload.slice(5));
 	        const videoInfo = this.player.video.videoInfo;
-
 	        if (videoInfo && videoInfo.width && videoInfo.height && config && config.codecWidth && config.codecHeight && (config.codecWidth !== videoInfo.width || config.codecHeight !== videoInfo.height)) {
 	          this.player.debug.warn('MediaSource', `width or height is update, width ${videoInfo.width}-> ${config.codecWidth}, height ${videoInfo.height}-> ${config.codecHeight}`);
 	          this.isInitInfo = false;
 	          this.player.video.init = false;
 	        }
 	      }
-
 	      if (!this.isDecodeFirstIIframe && isIframe) {
 	        this.isDecodeFirstIIframe = true;
 	      }
-
 	      if (this.isDecodeFirstIIframe) {
 	        if (this.firstRenderTime === null) {
 	          this.firstRenderTime = ts;
 	        }
-
 	        const dts = ts - this.firstRenderTime;
-
 	        this._decodeVideo(payload, dts, isIframe, cts);
 	      } else {
 	        this.player.debug.warn('MediaSource', 'decodeVideo isDecodeFirstIIframe false');
 	      }
 	    }
 	  }
-
 	  _decodeConfigurationRecord(payload, ts, isIframe, videoCodec) {
 	    let data = payload.slice(5);
 	    let config = {};
@@ -11552,30 +11140,28 @@
 	      codecWidth: config.codecWidth,
 	      codecHeight: config.codecHeight,
 	      videoType: config.videoType
-	    }; // ftyp
-
+	    };
+	    // ftyp
 	    const metaBox = MP4$1.generateInitSegment(metaData);
 	    this.isAvc = true;
 	    this.appendBuffer(metaBox.buffer);
 	    this.sequenceNumber = 0;
 	    this.cacheTrack = null;
 	    this.timeInit = false;
-	  } //
+	  }
 
-
+	  //
 	  _decodeVideo(payload, dts, isIframe, cts) {
 	    const player = this.player;
 	    let arrayBuffer = payload.slice(5);
-	    let bytes = arrayBuffer.byteLength; // player.debug.log('MediaSource', '_decodeVideo', ts);
-
+	    let bytes = arrayBuffer.byteLength;
+	    // player.debug.log('MediaSource', '_decodeVideo', ts);
 	    const $video = player.video.$videoElement;
 	    const videoBufferDelay = player._opt.videoBufferDelay;
-
 	    if ($video.buffered.length > 1) {
 	      this.removeBuffer($video.buffered.start(0), $video.buffered.end(0));
 	      this.timeInit = false;
 	    }
-
 	    if (this.dropping && dts - this.cacheTrack.dts > videoBufferDelay) {
 	      this.dropping = false;
 	      this.cacheTrack = {};
@@ -11589,13 +11175,13 @@
 	      mdatbox[3] = mdatBytes & 255;
 	      mdatbox.set(MP4$1.types.mdat, 4);
 	      mdatbox.set(this.cacheTrack.data, 8);
-	      this.cacheTrack.duration = dts - this.cacheTrack.dts; // moof
-
+	      this.cacheTrack.duration = dts - this.cacheTrack.dts;
+	      // moof
 	      let moofbox = MP4$1.moof(this.cacheTrack, this.cacheTrack.dts);
 	      let result = new Uint8Array(moofbox.byteLength + mdatbox.byteLength);
 	      result.set(moofbox, 0);
-	      result.set(mdatbox, moofbox.byteLength); // appendBuffer
-
+	      result.set(mdatbox, moofbox.byteLength);
+	      // appendBuffer
 	      this.appendBuffer(result.buffer);
 	      player.handleRender();
 	      player.updateStats({
@@ -11603,7 +11189,6 @@
 	        ts: dts,
 	        buf: player.demux && player.demux.delay || 0
 	      });
-
 	      if (!player._times.videoStart) {
 	        player._times.videoStart = now();
 	        player.handlePlayToRenderTimes();
@@ -11613,33 +11198,31 @@
 	      this.timeInit = false;
 	      this.cacheTrack = {};
 	    }
-
 	    if (!this.cacheTrack) {
 	      this.cacheTrack = {};
 	    }
-
 	    this.cacheTrack.id = 1;
 	    this.cacheTrack.sequenceNumber = ++this.sequenceNumber;
 	    this.cacheTrack.size = bytes;
 	    this.cacheTrack.dts = dts;
 	    this.cacheTrack.cts = cts;
 	    this.cacheTrack.isKeyframe = isIframe;
-	    this.cacheTrack.data = arrayBuffer; //
-
+	    this.cacheTrack.data = arrayBuffer;
+	    //
 	    this.cacheTrack.flags = {
 	      isLeading: 0,
 	      dependsOn: isIframe ? 2 : 1,
 	      isDependedOn: isIframe ? 1 : 0,
 	      hasRedundancy: 0,
 	      isNonSync: isIframe ? 0 : 1
-	    }; //
+	    };
 
+	    //
 	    if (!this.timeInit && $video.buffered.length === 1) {
 	      player.debug.log('MediaSource', 'timeInit set true');
 	      this.timeInit = true;
 	      $video.currentTime = $video.buffered.end(0);
 	    }
-
 	    if (!this.isInitInfo && $video.videoWidth > 0 && $video.videoHeight > 0) {
 	      player.debug.log('MediaSource', `updateVideoInfo: ${$video.videoWidth},${$video.videoHeight}`);
 	      player.video.updateVideoInfo({
@@ -11650,7 +11233,6 @@
 	      this.isInitInfo = true;
 	    }
 	  }
-
 	  appendBuffer(buffer) {
 	    const {
 	      debug,
@@ -11658,12 +11240,12 @@
 	        proxy
 	      }
 	    } = this.player;
-
 	    if (this.sourceBuffer === null) {
 	      this.sourceBuffer = this.mediaSource.addSourceBuffer(MP4_CODECS.avc);
 	      proxy(this.sourceBuffer, 'error', error => {
 	        debug.error('MediaSource', 'sourceBuffer error', error);
-	        this.player.emit(EVENTS.mseSourceBufferError, error); // this.dropSourceBuffer(false)
+	        this.player.emit(EVENTS.mseSourceBufferError, error);
+	        // this.dropSourceBuffer(false)
 	      });
 	    }
 
@@ -11671,18 +11253,15 @@
 	      debug.error('MediaSource', `this.mediaSourceAppendBufferError is true`);
 	      return;
 	    }
-
 	    if (this.mediaSourceAppendBufferFull) {
 	      debug.error('MediaSource', `this.mediaSourceAppendBufferFull is true`);
 	      return;
 	    }
-
 	    if (this.sourceBuffer.updating === false && this.isStateOpen) {
 	      try {
 	        this.sourceBuffer.appendBuffer(buffer);
 	      } catch (e) {
 	        debug.warn('MediaSource', 'this.sourceBuffer.appendBuffer()', e.code, e);
-
 	        if (e.code === 22) {
 	          // QuotaExceededError
 	          // The SourceBuffer is full, and cannot free space to append additional buffers
@@ -11699,17 +11278,16 @@
 	          this.player.emit(EVENTS.mseSourceBufferError, e);
 	        }
 	      }
-
 	      return;
 	    }
-
 	    if (this.isStateClosed) {
 	      this.player.emitError(EVENTS_ERROR.mseSourceBufferError, 'mediaSource is not attached to video or mediaSource is closed');
 	    } else if (this.isStateEnded) {
 	      this.player.emitError(EVENTS_ERROR.mseSourceBufferError, 'mediaSource is closed');
 	    } else {
 	      if (this.sourceBuffer.updating === true) {
-	        this.player.emit(EVENTS.mseSourceBufferBusy); // this.dropSourceBuffer(true);
+	        this.player.emit(EVENTS.mseSourceBufferBusy);
+	        // this.dropSourceBuffer(true);
 	      }
 	    }
 	  }
@@ -11719,11 +11297,9 @@
 	    this.removeSourceBuffer();
 	    this.endOfStream();
 	  }
-
 	  dropSourceBuffer(isDropping) {
 	    const $video = this.player.video.$videoElement;
 	    this.dropping = isDropping;
-
 	    if ($video.buffered.length > 0) {
 	      if ($video.buffered.end(0) - $video.currentTime > 1) {
 	        this.player.debug.warn('MediaSource', 'dropSourceBuffer', `$video.buffered.end(0) is ${$video.buffered.end(0)} - $video.currentTime ${$video.currentTime}`);
@@ -11731,7 +11307,6 @@
 	      }
 	    }
 	  }
-
 	  removeBuffer(start, end) {
 	    if (this.isStateOpen && this.sourceBuffer.updating === false) {
 	      try {
@@ -11743,11 +11318,9 @@
 	      this.player.debug.warn('MediaSource', 'removeBuffer() this.isStateOpen is', this.isStateOpen, 'this.sourceBuffer.updating', this.sourceBuffer.updating);
 	    }
 	  }
-
 	  endOfStream() {
 	    // fix: MediaSource endOfStream before demuxer initialization completes (before HAVE_METADATA) is treated as an error
 	    const $videoElement = this.player.video && this.player.video.$videoElement;
-
 	    if (this.isStateOpen && $videoElement && $videoElement.readyState >= 1) {
 	      try {
 	        this.mediaSource.endOfStream();
@@ -11756,7 +11329,6 @@
 	      }
 	    }
 	  }
-
 	  abortSourceBuffer() {
 	    if (this.isStateOpen) {
 	      if (this.sourceBuffer) {
@@ -11765,7 +11337,6 @@
 	      }
 	    }
 	  }
-
 	  removeSourceBuffer() {
 	    if (!this.isStateClosed) {
 	      if (this.mediaSource && this.sourceBuffer) {
@@ -11777,36 +11348,32 @@
 	      }
 	    }
 	  }
-
 	  getSourceBufferUpdating() {
 	    return this.sourceBuffer && this.sourceBuffer.updating;
 	  }
-
 	}
 
 	// tks: https://github.com/richtr/NoSleep.js
+
 	const WEBM = "data:video/webm;base64,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";
-	const MP4 = "data:video/mp4;base64,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"; // Detect iOS browsers < version 10
+	const MP4 = "data:video/mp4;base64,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";
 
-	const oldIOS = () => typeof navigator !== "undefined" && parseFloat(("" + (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0, ""])[1]).replace("undefined", "3_2").replace("_", ".").replace("_", "")) < 10 && !window.MSStream; // Detect native Wake Lock API support
+	// Detect iOS browsers < version 10
+	const oldIOS = () => typeof navigator !== "undefined" && parseFloat(("" + (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0, ""])[1]).replace("undefined", "3_2").replace("_", ".").replace("_", "")) < 10 && !window.MSStream;
 
-
+	// Detect native Wake Lock API support
 	const nativeWakeLock = () => "wakeLock" in navigator;
-
 	class NoSleep {
 	  constructor(player) {
 	    this.player = player;
 	    this.enabled = false;
-
 	    if (nativeWakeLock()) {
 	      this._wakeLock = null;
-
 	      const handleVisibilityChange = () => {
 	        if (this._wakeLock !== null && document.visibilityState === "visible") {
 	          this.enable();
 	        }
 	      };
-
 	      document.addEventListener("visibilitychange", handleVisibilityChange);
 	      document.addEventListener("fullscreenchange", handleVisibilityChange);
 	    } else if (oldIOS()) {
@@ -11816,11 +11383,8 @@
 	      this.noSleepVideo = document.createElement("video");
 	      this.noSleepVideo.setAttribute("title", "No Sleep");
 	      this.noSleepVideo.setAttribute("playsinline", "");
-
 	      this._addSourceToVideo(this.noSleepVideo, "webm", WEBM);
-
 	      this._addSourceToVideo(this.noSleepVideo, "mp4", MP4);
-
 	      this.noSleepVideo.addEventListener("loadedmetadata", () => {
 	        if (this.noSleepVideo.duration <= 1) {
 	          // webm source
@@ -11836,27 +11400,22 @@
 	      });
 	    }
 	  }
-
 	  _addSourceToVideo(element, type, dataURI) {
 	    var source = document.createElement("source");
 	    source.src = dataURI;
 	    source.type = `video/${type}`;
 	    element.appendChild(source);
 	  }
-
 	  get isEnabled() {
 	    return this.enabled;
 	  }
-
 	  enable() {
 	    const debug = this.player.debug;
-
 	    if (nativeWakeLock()) {
 	      return navigator.wakeLock.request("screen").then(wakeLock => {
 	        this._wakeLock = wakeLock;
 	        this.enabled = true;
 	        debug.log('wakeLock', 'Wake Lock active.');
-
 	        this._wakeLock.addEventListener("release", () => {
 	          // ToDo: Potentially emit an event for the page to observe since
 	          // Wake Lock releases happen when page visibility changes.
@@ -11889,15 +11448,12 @@
 	      });
 	    }
 	  }
-
 	  disable() {
 	    const debug = this.player.debug;
-
 	    if (nativeWakeLock()) {
 	      if (this._wakeLock) {
 	        this._wakeLock.release();
 	      }
-
 	      this._wakeLock = null;
 	    } else if (oldIOS()) {
 	      if (this.noSleepTimer) {
@@ -11908,10 +11464,8 @@
 	    } else {
 	      this.noSleepVideo.pause();
 	    }
-
 	    this.enabled = false;
 	  }
-
 	}
 
 	class Player extends Emitter {
@@ -11920,56 +11474,50 @@
 	    this.$container = container;
 	    this._opt = Object.assign({}, DEFAULT_PLAYER_OPTIONS, options);
 	    this.debug = new Debug(this);
-	    this.debug.log('Player', 'init'); // disable offscreen
+	    this.debug.log('Player', 'init');
 
+	    // disable offscreen
 	    this._opt.forceNoOffscreen = true;
-
 	    if (isMobile() || isPad()) {
 	      this.debug.log('Player', 'isMobile and set _opt.controlAutoHide false');
 	      this._opt.controlAutoHide = false;
 	    }
-
 	    if (this._opt.autoUseSystemFullScreen) {
 	      if (screenfull.isEnabled && this._opt.useWebFullScreen) {
 	        this.debug.log('Player', 'screenfull.isEnabled is true and _opt.useWebFullScreen is true , set _opt.useWebFullScreen false');
 	        this._opt.useWebFullScreen = false;
 	      }
-
 	      if (isFalse(screenfull.isEnabled) && isFalse(this._opt.useWebFullScreen)) {
 	        this.debug.log('Player', 'screenfull.isEnabled is false and _opt.useWebFullScreen is false , set _opt.useWebFullScreen true');
 	        this._opt.useWebFullScreen = true;
 	      }
-	    } //
-
-
+	    }
+	    //
 	    if (this._opt.useWCS) {
 	      this._opt.useWCS = supportWCS();
-	    } //
+	    }
 
-
+	    //
 	    if (this._opt.useMSE) {
 	      this._opt.useMSE = supportMSE();
-	    } //
+	    }
 
-
+	    //
 	    if (this._opt.wcsUseVideoRender) {
 	      this._opt.wcsUseVideoRender = supportMediaStreamTrack();
-	    } // 如果使用mse则强制不允许 webcodecs
+	    }
 
-
+	    // 如果使用mse则强制不允许 webcodecs
 	    if (this._opt.useMSE) {
 	      if (this._opt.useWCS) {
 	        this.debug.log('Player', 'useWCS set true->false');
 	      }
-
 	      if (!this._opt.forceNoOffscreen) {
 	        this.debug.log('Player', 'forceNoOffscreen set false->true');
 	      }
-
 	      this._opt.useWCS = false;
 	      this._opt.forceNoOffscreen = true;
 	    }
-
 	    if (!this._opt.forceNoOffscreen) {
 	      if (!supportOffscreenV2()) {
 	        this._opt.forceNoOffscreen = true;
@@ -11978,21 +11526,23 @@
 	        this._opt.useOffscreen = true;
 	      }
 	    }
-
 	    if (!this._opt.hasAudio) {
 	      this._opt.operateBtns.audio = false;
 	    }
-
-	    this._opt.hasControl = this._hasControl(); //
-
+	    this._opt.hasControl = this._hasControl();
+	    //
 	    this._loading = false;
 	    this._playing = false;
-	    this._hasLoaded = false; //
+	    this._hasLoaded = false;
+	    this._destroyed = false;
+	    this._closed = false;
 
+	    //
 	    this._checkHeartTimeout = null;
 	    this._checkLoadingTimeout = null;
-	    this._checkStatsInterval = null; //
+	    this._checkStatsInterval = null;
 
+	    //
 	    this._startBpsTime = null;
 	    this._isPlayingBeforePageHidden = false;
 	    this._stats = {
@@ -12005,146 +11555,125 @@
 	      vbps: 0,
 	      // 当前视频码率，单位bit
 	      ts: 0 // 当前视频帧pts，单位毫秒
+	    };
 
-	    }; // 各个步骤的时间统计
+	    // 各个步骤的时间统计
+	    this._times = initPlayTimes();
 
-	    this._times = initPlayTimes(); //
-
+	    //
 	    this._videoTimestamp = 0;
 	    this._audioTimestamp = 0;
 	    property$1(this);
 	    this.events = new Events(this);
 	    this.video = new Video(this);
-
 	    if (this._opt.hasAudio) {
 	      this.audio = new Audio(this);
 	    }
-
 	    this.recorder = new Recorder(this);
-
 	    if (!this._onlyMseOrWcsVideo()) {
 	      this.decoderWorker = new DecoderWorker(this);
 	    } else {
 	      this.loaded = true;
 	    }
-
 	    this.stream = null;
 	    this.demux = null;
 	    this._lastVolume = null;
-
 	    if (this._opt.useWCS) {
 	      this.webcodecsDecoder = new WebcodecsDecoder(this);
 	      this.loaded = true;
 	    }
-
 	    if (this._opt.useMSE) {
 	      this.mseDecoder = new MseDecoder(this);
 	      this.loaded = true;
-	    } //
+	    }
 
-
+	    //
 	    this.control = new Control(this);
-
 	    if (isMobile()) {
 	      this.keepScreenOn = new NoSleep(this);
 	    }
-
 	    events$1(this);
 	    observer(this);
 	    this.debug.log('Player', 'init and version is', VERSION);
-
 	    if (this._opt.useWCS) {
 	      this.debug.log('Player', 'use WCS');
 	    }
-
 	    if (this._opt.useMSE) {
 	      this.debug.log('Player', 'use MSE');
 	    }
-
 	    if (this._opt.useOffscreen) {
 	      this.debug.log('Player', 'use offscreen');
 	    }
-
 	    try {
 	      this.debug.log('Player options', JSON.stringify(this._opt));
-	    } catch (e) {// ignore
+	    } catch (e) {
+	      // ignore
 	    }
 	  }
-
 	  async destroy() {
+	    this._destroyed = true;
 	    this._loading = false;
 	    this._playing = false;
 	    this._hasLoaded = false;
 	    this._lastVolume = null;
 	    this._times = initPlayTimes();
-
 	    if (this.decoderWorker) {
 	      await this.decoderWorker.destroy();
 	      this.decoderWorker = null;
 	    }
-
 	    if (this.video) {
 	      this.video.destroy();
 	      this.video = null;
 	    }
-
 	    if (this.audio) {
 	      this.audio.destroy();
 	      this.audio = null;
 	    }
-
 	    if (this.stream) {
 	      await this.stream.destroy();
 	      this.stream = null;
 	    }
-
 	    if (this.recorder) {
 	      this.recorder.destroy();
 	      this.recorder = null;
 	    }
-
 	    if (this.control) {
 	      this.control.destroy();
 	      this.control = null;
 	    }
-
 	    if (this.webcodecsDecoder) {
 	      this.webcodecsDecoder.destroy();
 	      this.webcodecsDecoder = null;
 	    }
-
 	    if (this.mseDecoder) {
 	      this.mseDecoder.destroy();
 	      this.mseDecoder = null;
 	    }
-
 	    if (this.demux) {
 	      this.demux.destroy();
 	      this.demux = null;
 	    }
-
 	    if (this.events) {
 	      this.events.destroy();
 	      this.events = null;
 	    }
-
 	    this.clearCheckHeartTimeout();
 	    this.clearCheckLoadingTimeout();
-	    this.clearStatsInterval(); //
-
+	    this.clearStatsInterval();
+	    //
 	    this.releaseWakeLock();
-	    this.keepScreenOn = null; // reset stats
-
+	    this.keepScreenOn = null;
+	    // reset stats
 	    this.resetStats();
 	    this._audioTimestamp = 0;
-	    this._videoTimestamp = 0; // 其他没法解耦的，通过 destroy 方式
+	    this._videoTimestamp = 0;
 
-	    this.emit('destroy'); // 接触所有绑定事件
-
+	    // 其他没法解耦的，通过 destroy 方式
+	    this.emit('destroy');
+	    // 接触所有绑定事件
 	    this.off();
 	    this.debug.log('play', 'destroy end');
 	  }
-
 	  set fullscreen(value) {
 	    if (isMobile() && this._opt.useWebFullScreen) {
 	      this.emit(EVENTS.webFullscreen, value);
@@ -12158,39 +11687,32 @@
 	      this.emit(EVENTS.fullscreen, value);
 	    }
 	  }
-
 	  get fullscreen() {
 	    return isFullScreen() || this.webFullscreen;
 	  }
-
 	  set webFullscreen(value) {
 	    this.emit(EVENTS.webFullscreen, value);
 	  }
-
 	  get webFullscreen() {
 	    return this.$container.classList.contains('jessibuca-fullscreen-web');
 	  }
-
 	  set loaded(value) {
 	    this._hasLoaded = value;
 	  }
-
 	  get loaded() {
 	    return this._hasLoaded;
-	  } //
+	  }
 
-
+	  //
 	  set playing(value) {
 	    if (value) {
 	      // 将loading 设置为 false
 	      this.loading = false;
 	    }
-
 	    if (this.playing !== value) {
 	      this._playing = value;
 	      this.emit(EVENTS.playing, value);
 	      this.emit(EVENTS.volumechange, this.volume);
-
 	      if (value) {
 	        this.emit(EVENTS.play);
 	      } else {
@@ -12198,37 +11720,30 @@
 	      }
 	    }
 	  }
-
 	  get playing() {
 	    return this._playing;
 	  }
-
 	  get volume() {
 	    return this.audio && this.audio.volume || 0;
 	  }
-
 	  set volume(value) {
 	    if (value !== this.volume) {
 	      this.audio && this.audio.setVolume(value);
 	      this._lastVolume = value;
 	    }
 	  }
-
 	  get lastVolume() {
 	    return this._lastVolume;
 	  }
-
 	  set loading(value) {
 	    if (this.loading !== value) {
 	      this._loading = value;
 	      this.emit(EVENTS.loading, this._loading);
 	    }
 	  }
-
 	  get loading() {
 	    return this._loading;
 	  }
-
 	  set recording(value) {
 	    if (value) {
 	      if (this.playing) {
@@ -12238,32 +11753,28 @@
 	      this.recorder && this.recorder.stopRecordAndSave();
 	    }
 	  }
-
 	  get recording() {
 	    return this.recorder ? this.recorder.recording : false;
 	  }
-
 	  set audioTimestamp(value) {
 	    if (value === null) {
 	      return;
 	    }
-
 	    this._audioTimestamp = value;
-	  } //
+	  }
 
-
+	  //
 	  get audioTimestamp() {
 	    return this._audioTimestamp;
-	  } //
+	  }
 
-
+	  //
 	  set videoTimestamp(value) {
 	    if (value === null) {
 	      return;
 	    }
-
-	    this._videoTimestamp = value; // just for wasm
-
+	    this._videoTimestamp = value;
+	    // just for wasm
 	    if (!this._opt.useWCS && !this._opt.useMSE) {
 	      if (this.audioTimestamp && this.videoTimestamp) {
 	        this.audio && this.audio.emit(EVENTS.videoSyncAudio, {
@@ -12273,64 +11784,57 @@
 	        });
 	      }
 	    }
-	  } //
+	  }
 
-
+	  //
 	  get videoTimestamp() {
 	    return this._videoTimestamp;
 	  }
-
 	  get isDebug() {
 	    return this._opt.debug === true;
 	  }
+
 	  /**
 	   *
 	   * @param options
 	   */
-
-
 	  updateOption(options) {
 	    this._opt = Object.assign({}, this._opt, options);
 	  }
+
 	  /**
 	   *
 	   * @returns {Promise<unknown>}
 	   */
-
-
 	  init() {
 	    return new Promise((resolve, reject) => {
 	      if (!this.stream) {
 	        this.stream = new Stream(this);
 	      }
-
 	      if (!this.audio) {
 	        if (this._opt.hasAudio) {
 	          this.audio = new Audio(this);
 	        }
 	      }
-
 	      if (!this.demux) {
 	        this.demux = new Demux(this);
 	      }
-
 	      if (this._opt.useWCS) {
 	        if (!this.webcodecsDecoder) {
 	          this.webcodecsDecoder = new WebcodecsDecoder(this);
 	        }
 	      }
-
 	      if (this._opt.useMSE) {
 	        if (!this.mseDecoder) {
 	          this.mseDecoder = new MseDecoder(this);
 	        }
 	      }
-
 	      if (!this.decoderWorker && !this._onlyMseOrWcsVideo()) {
 	        this.decoderWorker = new DecoderWorker(this);
 	        this.debug.log('Player', 'waiting decoderWorker init');
 	        this.once(EVENTS.decoderWorkerInit, () => {
 	          this.debug.log('Player', 'decoderWorker init success');
+	          this.loaded = true;
 	          resolve();
 	        });
 	      } else {
@@ -12338,50 +11842,43 @@
 	      }
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param url
 	   * @returns {Promise<unknown>}
 	   */
-
-
 	  play(url, options) {
 	    return new Promise((resolve, reject) => {
 	      if (!url && !this._opt.url) {
 	        return reject();
 	      }
-
+	      this._closed = false;
 	      this.loading = true;
 	      this.playing = false;
 	      this._times.playInitStart = now();
-
 	      if (!url) {
 	        url = this._opt.url;
 	      }
-
 	      this._opt.url = url;
 	      this.clearCheckHeartTimeout();
 	      this.init().then(() => {
-	        this._times.playStart = now(); //
-
+	        this._times.playStart = now();
+	        //
 	        if (this._opt.isNotMute) {
 	          this.mute(false);
 	        }
-
 	        if (this.webcodecsDecoder) {
 	          this.webcodecsDecoder.once(EVENTS_ERROR.webcodecsH265NotSupport, () => {
 	            this.emit(EVENTS_ERROR.webcodecsH265NotSupport);
-
 	            if (!this._opt.autoWasm) {
 	              this.emit(EVENTS.error, EVENTS_ERROR.webcodecsH265NotSupport);
 	            }
 	          });
 	        }
-
 	        if (this.mseDecoder) {
 	          this.mseDecoder.once(EVENTS_ERROR.mediaSourceH265NotSupport, () => {
 	            this.emit(EVENTS_ERROR.mediaSourceH265NotSupport);
-
 	            if (!this._opt.autoWasm) {
 	              this.emit(EVENTS.error, EVENTS_ERROR.mediaSourceH265NotSupport);
 	            }
@@ -12399,31 +11896,34 @@
 	            this.emitError(EVENTS_ERROR.mediaSourceAppendBufferEndTimeout);
 	          });
 	        }
-
 	        this.enableWakeLock();
-	        this.stream.fetchStream(url, options); //
+	        this.stream.fetchStream(url, options);
 
-	        this.checkLoadingTimeout(); // fetch error
-
+	        //
+	        this.checkLoadingTimeout();
+	        // fetch error
 	        this.stream.once(EVENTS_ERROR.fetchError, error => {
 	          // reject(error)
 	          this.emitError(EVENTS_ERROR.fetchError, error);
-	        }); // ws
+	        });
 
+	        // ws
 	        this.stream.once(EVENTS_ERROR.websocketError, error => {
 	          // reject(error)
 	          this.emitError(EVENTS_ERROR.websocketError, error);
-	        }); // stream end
+	        });
 
+	        // stream end
 	        this.stream.once(EVENTS.streamEnd, msg => {
 	          // reject();
 	          this.emitError(EVENTS.streamEnd, msg);
-	        }); // success
+	        });
 
+	        // success
 	        this.stream.once(EVENTS.streamSuccess, () => {
 	          resolve();
-	          this._times.streamResponse = now(); //
-
+	          this._times.streamResponse = now();
+	          //
 	          this.video.play();
 	          this.checkStatsInterval();
 	        });
@@ -12432,11 +11932,10 @@
 	      });
 	    });
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  close() {
 	    return new Promise((resolve, reject) => {
 	      this._close().then(() => {
@@ -12445,101 +11944,88 @@
 	      });
 	    });
 	  }
-
 	  resumeAudioAfterPause() {
 	    if (this.lastVolume) {
 	      this.volume = this.lastVolume;
 	    }
 	  }
-
 	  _close() {
 	    return new Promise((resolve, reject) => {
+	      this._closed = true;
 	      //
 	      if (this.stream) {
 	        this.stream.destroy();
 	        this.stream = null;
 	      }
-
 	      if (this.demux) {
 	        this.demux.destroy();
 	        this.demux = null;
-	      } //
+	      }
 
-
+	      //
 	      if (this.decoderWorker) {
 	        this.decoderWorker.destroy();
 	        this.decoderWorker = null;
 	      }
-
 	      if (this.webcodecsDecoder) {
 	        this.webcodecsDecoder.destroy();
 	        this.webcodecsDecoder = null;
 	      }
-
 	      if (this.mseDecoder) {
 	        this.mseDecoder.destroy();
 	        this.mseDecoder = null;
 	      }
-
 	      if (this.audio) {
 	        this.audio.destroy();
 	        this.audio = null;
 	      }
-
 	      this.clearCheckHeartTimeout();
 	      this.clearCheckLoadingTimeout();
 	      this.clearStatsInterval();
 	      this.playing = false;
 	      this.loading = false;
 	      this.recording = false;
-
 	      if (this.video) {
 	        this.video.resetInit();
 	        this.video.pause(true);
-	      } // release lock
-
-
-	      this.releaseWakeLock(); // reset stats
-
-	      this.resetStats(); //
-
+	      }
+	      // release lock
+	      this.releaseWakeLock();
+	      // reset stats
+	      this.resetStats();
+	      //
 	      this._audioTimestamp = 0;
-	      this._videoTimestamp = 0; //
-
-	      this._times = initPlayTimes(); //
-
+	      this._videoTimestamp = 0;
+	      //
+	      this._times = initPlayTimes();
+	      //
 	      setTimeout(() => {
 	        resolve();
 	      }, 0);
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param flag {boolean} 是否清除画面
 	   * @returns {Promise<unknown>}
 	   */
-
-
-	  pause() {
-	    let flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
+	  pause(flag = false) {
 	    if (flag) {
 	      return this.close();
 	    } else {
 	      return this._close();
 	    }
 	  }
+
 	  /**
 	   *
 	   * @param flag
 	   */
-
-
 	  mute(flag) {
 	    if (this.audio) {
 	      const prev = this.audio.getLastVolume();
 	      this.audio.mute(flag);
-
 	      if (flag) {
 	        this._lastVolume = 0;
 	      } else {
@@ -12547,40 +12033,35 @@
 	      }
 	    }
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  resize() {
 	    this.video.resize();
 	  }
+
 	  /**
 	   *
 	   * @param fileName
 	   * @param fileType
 	   */
-
-
 	  startRecord(fileName, fileType) {
 	    if (this.recording) {
 	      return;
 	    }
-
 	    this.recorder.setFileName(fileName, fileType);
 	    this.recording = true;
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  stopRecordAndSave() {
 	    if (this.recording) {
 	      this.recording = false;
 	    }
 	  }
-
 	  _hasControl() {
 	    let result = false;
 	    let hasBtnShow = false;
@@ -12589,24 +12070,20 @@
 	        hasBtnShow = true;
 	      }
 	    });
-
 	    if (this._opt.showBandwidth || this._opt.text || hasBtnShow) {
 	      result = true;
 	    }
-
 	    return result;
 	  }
-
 	  _onlyMseOrWcsVideo() {
 	    return this._opt.hasAudio === false && (this._opt.useMSE || this._opt.useWCS && !this._opt.useOffscreen);
 	  }
-
 	  checkHeart() {
 	    this.clearCheckHeartTimeout();
 	    this.checkHeartTimeout();
-	  } // 心跳检查，如果渲染间隔暂停了多少时间之后，就会抛出异常
+	  }
 
-
+	  // 心跳检查，如果渲染间隔暂停了多少时间之后，就会抛出异常
 	  checkHeartTimeout() {
 	    this._checkHeartTimeout = setTimeout(() => {
 	      if (this.playing) {
@@ -12614,7 +12091,9 @@
 	        if (this._stats.fps !== 0) {
 	          return;
 	        }
-
+	        if (this.isDestroyedOrClosed()) {
+	          return;
+	        }
 	        this.pause().then(() => {
 	          this.emit(EVENTS.timeout, EVENTS.delayTimeout);
 	          this.emit(EVENTS.delayTimeout);
@@ -12622,100 +12101,91 @@
 	      }
 	    }, this._opt.heartTimeout * 1000);
 	  }
-
 	  checkStatsInterval() {
 	    this._checkStatsInterval = setInterval(() => {
 	      this.updateStats();
 	    }, 1000);
-	  } //
+	  }
 
-
+	  //
 	  clearCheckHeartTimeout() {
 	    if (this._checkHeartTimeout) {
 	      clearTimeout(this._checkHeartTimeout);
 	      this._checkHeartTimeout = null;
 	    }
-	  } // loading 等待时间
+	  }
 
-
+	  // loading 等待时间
 	  checkLoadingTimeout() {
 	    this._checkLoadingTimeout = setTimeout(() => {
 	      // check again
 	      if (this.playing) {
 	        return;
 	      }
-
+	      if (this.isDestroyedOrClosed()) {
+	        return;
+	      }
 	      this.pause().then(() => {
 	        this.emit(EVENTS.timeout, EVENTS.loadingTimeout);
 	        this.emit(EVENTS.loadingTimeout);
 	      });
 	    }, this._opt.loadingTimeout * 1000);
 	  }
-
 	  clearCheckLoadingTimeout() {
 	    if (this._checkLoadingTimeout) {
 	      clearTimeout(this._checkLoadingTimeout);
 	      this._checkLoadingTimeout = null;
 	    }
 	  }
-
 	  clearStatsInterval() {
 	    if (this._checkStatsInterval) {
 	      clearInterval(this._checkStatsInterval);
 	      this._checkStatsInterval = null;
 	    }
 	  }
-
 	  handleRender() {
+	    if (this.isDestroyedOrClosed()) {
+	      return;
+	    }
 	    if (this.loading) {
 	      this.emit(EVENTS.start);
 	      this.loading = false;
 	      this.clearCheckLoadingTimeout();
 	    }
-
 	    if (!this.playing) {
 	      this.playing = true;
 	    }
-
 	    this.checkHeart();
-	  } //
+	  }
 
-
-	  updateStats(options) {
-	    options = options || {};
-
+	  //
+	  updateStats(options = {}) {
+	    if (this.isDestroyedOrClosed()) {
+	      return;
+	    }
 	    if (!this._startBpsTime) {
 	      this._startBpsTime = now();
 	    }
-
 	    if (isNotEmpty(options.ts)) {
 	      this._stats.ts = options.ts;
 	    }
-
 	    if (isNotEmpty(options.buf)) {
 	      this._stats.buf = options.buf;
 	    }
-
 	    if (options.fps) {
 	      this._stats.fps += 1;
 	    }
-
 	    if (options.abps) {
 	      this._stats.abps += options.abps;
 	    }
-
 	    if (options.vbps) {
 	      this._stats.vbps += options.vbps;
 	    }
-
 	    const _nowTime = now();
-
 	    const timestamp = _nowTime - this._startBpsTime;
-
 	    if (timestamp < 1 * 1000) {
 	      return;
 	    }
-
 	    this.emit(EVENTS.stats, this._stats);
 	    this.emit(EVENTS.performance, fpsStatus(this._stats.fps));
 	    this._stats.fps = 0;
@@ -12723,7 +12193,6 @@
 	    this._stats.vbps = 0;
 	    this._startBpsTime = _nowTime;
 	  }
-
 	  resetStats() {
 	    this._startBpsTime = null;
 	    this._stats = {
@@ -12735,20 +12204,20 @@
 	      ts: 0
 	    };
 	  }
-
 	  enableWakeLock() {
 	    if (this._opt.keepScreenOn) {
 	      this.keepScreenOn && this.keepScreenOn.enable();
 	    }
 	  }
-
 	  releaseWakeLock() {
 	    if (this._opt.keepScreenOn) {
 	      this.keepScreenOn && this.keepScreenOn.disable();
 	    }
 	  }
-
 	  handlePlayToRenderTimes() {
+	    if (this.isDestroyedOrClosed()) {
+	      return;
+	    }
 	    const _times = this._times;
 	    _times.playTimestamp = _times.playStart - _times.playInitStart;
 	    _times.streamTimestamp = _times.streamStart - _times.playStart;
@@ -12759,48 +12228,46 @@
 	    _times.allTimestamp = _times.videoStart - _times.playInitStart;
 	    this.emit(EVENTS.playToRenderTimes, _times);
 	  }
-
 	  getOption() {
 	    return this._opt;
 	  }
-
-	  emitError(errorType) {
-	    let message = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	  emitError(errorType, message = '') {
 	    this.emit(EVENTS.error, errorType, message);
 	    this.emit(errorType, message);
 	  }
-
 	  isControlBarShow() {
 	    const hasControl = this._opt.hasControl;
 	    const controlAutoHide = this._opt.controlAutoHide;
 	    let result = hasControl && !controlAutoHide;
-
 	    if (result) {
 	      if (this.control) {
 	        result = this.control.getBarIsShow();
 	      }
 	    }
-
 	    return result;
 	  }
-
 	  getControlBarShow() {
 	    let result = false;
-
 	    if (this.control) {
 	      result = this.control.getBarIsShow();
 	    }
-
 	    return result;
 	  }
-
 	  toggleControlBar(isShow) {
 	    if (this.control) {
 	      this.control.toggleBar(isShow);
 	      this.resize();
 	    }
 	  }
-
+	  isDestroyed() {
+	    return this._destroyed;
+	  }
+	  isClosed() {
+	    return this._closed;
+	  }
+	  isDestroyedOrClosed() {
+	    return this.isDestroyed() || this.isClosed();
+	  }
 	}
 
 	class Jessibuca extends Emitter {
@@ -12808,63 +12275,56 @@
 	    super();
 	    let _opt = options;
 	    let $container = options.container;
-
 	    if (typeof options.container === 'string') {
 	      $container = document.querySelector(options.container);
 	    }
-
 	    if (!$container) {
 	      throw new Error('Jessibuca need container option');
-	    } // check container node name
-
-
+	    }
+	    // check container node name
 	    if ($container.nodeName === 'CANVAS' || $container.nodeName === 'VIDEO') {
 	      throw new Error(`Jessibuca container type can not be ${$container.nodeName} type`);
 	    }
-
 	    if (_opt.videoBuffer >= _opt.heartTimeout) {
 	      throw new Error(`Jessibuca videoBuffer ${_opt.videoBuffer}s must be less than heartTimeout ${_opt.heartTimeout}s`);
 	    }
-
 	    if (this._checkHasCreated($container)) {
 	      throw new Error(`Jessibuca container has been created and can not be created again`, $container);
-	    } // videoBuffer set too long
+	    }
 
-
+	    // videoBuffer set too long
 	    if (_opt.videoBuffer > 10) {
 	      console.warn('Jessibuca', `videoBuffer ${_opt.videoBuffer}s is too long, will black screen for ${_opt.videoBuffer}s , it is recommended to set it to less than 10s`);
 	    }
-
 	    if (!$container.classList) {
 	      throw new Error('Jessibuca container option must be DOM Element');
 	    }
-
 	    $container.classList.add('jessibuca-container');
 	    setElementDataset($container, CONTAINER_DATA_SET_KEY, uuid16());
-	    delete _opt.container; // 禁用离屏渲染
+	    delete _opt.container;
 
-	    _opt.forceNoOffscreen = true; // 移动端不支持自动关闭控制栏
+	    // 禁用离屏渲染
+	    _opt.forceNoOffscreen = true;
 
+	    // 移动端不支持自动关闭控制栏
 	    if (isMobile()) {
 	      _opt.controlAutoHide = false;
-	    } // s -> ms
+	    }
 
-
+	    // s -> ms
 	    if (isNotEmpty(_opt.videoBuffer)) {
 	      _opt.videoBuffer = Number(_opt.videoBuffer) * 1000;
-	    } // setting
+	    }
 
-
+	    // setting
 	    if (isNotEmpty(_opt.timeout)) {
 	      if (isEmpty(_opt.loadingTimeout)) {
 	        _opt.loadingTimeout = _opt.timeout;
 	      }
-
 	      if (isEmpty(_opt.heartTimeout)) {
 	        _opt.heartTimeout = _opt.timeout;
 	      }
 	    }
-
 	    this._opt = _opt;
 	    this.$container = $container;
 	    this._loadingTimeoutReplayTimes = 0;
@@ -12873,65 +12333,51 @@
 	    this._destroyed = false;
 	    this.events = new Events(this);
 	    this.debug = new Debug(this);
-
 	    this._initPlayer($container, _opt);
-
 	    console.log(`Jessibuca version: ${VERSION}`);
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  async destroy() {
 	    this._destroyed = true;
 	    this.off();
-
 	    this._clearInitDecoderWorkerTimeout();
-
 	    if (this.player) {
 	      await this.player.destroy();
 	      this.player = null;
 	    }
-
 	    if (this.events) {
 	      this.events.destroy();
 	      this.events = null;
 	    }
-
 	    if (this.$container) {
 	      this.$container.classList.remove('jessibuca-container');
 	      this.$container.classList.remove('jessibuca-fullscreen-web');
 	      removeElementDataset(this.$container, CONTAINER_DATA_SET_KEY);
 	      this.$container = null;
 	    }
-
 	    this._opt = {};
 	    this._loadingTimeoutReplayTimes = 0;
 	    this._heartTimeoutReplayTimes = 0;
 	  }
-
 	  _initPlayer($container, options) {
 	    this.player = new Player($container, options);
-
 	    try {
 	      this.debug.log('jessibuca', '_initPlayer', JSON.stringify(this.player.getOption()));
-	    } catch (e) {// ignore
+	    } catch (e) {
+	      // ignore
 	    }
-
 	    this._bindEvents();
 	  }
-
-	  _resetPlayer() {
-	    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  _resetPlayer(options = {}) {
 	    this.player.destroy();
 	    this.player = null;
 	    this._opt = Object.assign(this._opt, options);
 	    this._opt.url = ''; // reset url
-
 	    this._initPlayer(this.$container, this._opt);
 	  }
-
 	  _bindEvents() {
 	    // 对外的事件
 	    Object.keys(JESSIBUCA_EVENTS).forEach(key => {
@@ -12940,65 +12386,58 @@
 	      });
 	    });
 	  }
+
 	  /**
 	   * 是否销毁
 	   * @returns {boolean}
 	   */
-
-
 	  isDestroyed() {
 	    return this._destroyed;
 	  }
+
 	  /**
 	   * 是否开启控制台调试打印
 	   * @param value {Boolean}
 	   */
-
-
 	  setDebug(value) {
 	    this.player.updateOption({
 	      debug: !!value
 	    });
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  mute() {
 	    this.player.mute(true);
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  cancelMute() {
 	    this.player.mute(false);
 	  }
+
 	  /**
 	   *
 	   * @param value {number}
 	   */
-
-
 	  setVolume(value) {
 	    this.player.volume = value;
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  audioResume() {
 	    this.player.audio && this.player.audio.audioEnabled(true);
 	  }
+
 	  /**
 	   * 设置超时时长, 单位秒 在连接成功之前和播放中途,如果超过设定时长无数据返回,则回调timeout事件
 	   * @param value {number}
 	   */
-
-
 	  setTimeout(time) {
 	    time = Number(time);
 	    this.player.updateOption({
@@ -13007,45 +12446,39 @@
 	      heartTimeout: time
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param type {number}: 0,1,2
 	   */
-
-
 	  setScaleMode(type) {
 	    type = Number(type);
 	    let options = {
 	      isFullResize: false,
 	      isResize: false
 	    };
-
 	    switch (type) {
 	      case SCALE_MODE_TYPE.full:
 	        options.isFullResize = false;
 	        options.isResize = false;
 	        break;
-
 	      case SCALE_MODE_TYPE.auto:
 	        options.isFullResize = false;
 	        options.isResize = true;
 	        break;
-
 	      case SCALE_MODE_TYPE.fullAuto:
 	        options.isFullResize = true;
 	        options.isResize = true;
 	        break;
 	    }
-
 	    this.player.updateOption(options);
 	    this.resize();
 	  }
+
 	  /**
 	   *
 	   * @returns {Promise<commander.ParseOptionsResult.unknown>}
 	   */
-
-
 	  pause() {
 	    return new Promise((resolve, reject) => {
 	      if (this.player) {
@@ -13059,45 +12492,39 @@
 	      }
 	    });
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  async close() {
 	    await this.destroy();
 	    return true;
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  clearView() {
 	    this.player.video.clearView();
 	  }
+
 	  /**
 	   *
 	   * @param url {string}
 	   * @param options {object}
 	   * @returns {Promise<unknown>}
 	   */
-
-
-	  play(url) {
-	    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  play(url, options = {}) {
 	    return new Promise((resolve, reject) => {
 	      if (this.isDestroyed()) {
 	        reject('Jessibuca is destroyed');
 	        return;
 	      }
-
 	      if (!url && !this._opt.url) {
 	        this.emit(EVENTS.error, EVENTS_ERROR.playError);
 	        reject('play url is empty');
 	        return;
 	      }
-
 	      if (url) {
 	        // url 相等的时候。
 	        if (this._opt.url) {
@@ -13110,8 +12537,8 @@
 	              // pause ->  play
 	              this.clearView();
 	              this.player.play(this._opt.url, this._opt.playOptions).then(() => {
-	                resolve(); // 恢复下之前的音量
-
+	                resolve();
+	                // 恢复下之前的音量
 	                this.player.resumeAudioAfterPause();
 	              }).catch(e => {
 	                this.debug.warn('jessibuca', 'pause ->  play and play error', e);
@@ -13125,7 +12552,6 @@
 	            this.player.pause().then(() => {
 	              // 清除 画面
 	              this.clearView();
-
 	              this._play(url, options).then(() => {
 	                resolve();
 	              }).catch(e => {
@@ -13149,8 +12575,8 @@
 	        //  url 不存在的时候
 	        //  就是从 play -> pause -> play
 	        this.player.play(this._opt.url, this._opt.playOptions).then(() => {
-	          resolve(); // 恢复下之前的音量
-
+	          resolve();
+	          // 恢复下之前的音量
 	          this.player.resumeAudioAfterPause();
 	        }).catch(e => {
 	          this.debug.warn('jessibuca', 'url is null and play error', e);
@@ -13161,6 +12587,7 @@
 	      }
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param url {string}
@@ -13168,18 +12595,15 @@
 	   * @returns {Promise<unknown>}
 	   * @private
 	   */
-
-
-	  _play(url) {
-	    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  _play(url, options = {}) {
 	    return new Promise((resolve, reject) => {
 	      this._opt.url = url;
-	      this._opt.playOptions = options; //  新的url
-
-	      const isHttp = url.indexOf("http") === 0; //
-
-	      const protocol = isHttp ? PLAYER_PLAY_PROTOCOL.fetch : PLAYER_PLAY_PROTOCOL.websocket; //
-
+	      this._opt.playOptions = options;
+	      //  新的url
+	      const isHttp = url.indexOf("http") === 0;
+	      //
+	      const protocol = isHttp ? PLAYER_PLAY_PROTOCOL.fetch : PLAYER_PLAY_PROTOCOL.websocket;
+	      //
 	      const demuxType = isHttp || url.indexOf(".flv") !== -1 || this.player._opt.isFlv ? DEMUX_TYPE.flv : DEMUX_TYPE.m7s;
 	      this.player.updateOption({
 	        protocol,
@@ -13188,11 +12612,9 @@
 	      this.player.once(EVENTS_ERROR.webglAlignmentError, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'webglAlignmentError');
-
 	          this._resetPlayer({
 	            openWebglAlignment: true
 	          });
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'webglAlignmentError and play success');
@@ -13209,16 +12631,21 @@
 	          this.debug.warn('Jessibuca', 'webglContextLostError and paused error');
 	        });
 	      });
+	      this.player.once(EVENTS_ERROR.webglInitError, () => {
+	        this.pause().then(() => {
+	          this.debug.log('Jessibuca', 'webglInitError and paused');
+	        }).catch(() => {
+	          this.debug.warn('Jessibuca', 'webglInitError and paused error');
+	        });
+	      });
 	      this.player.once(EVENTS_ERROR.mediaSourceH265NotSupport, () => {
 	        this.pause().then(() => {
 	          if (this.player._opt.autoWasm) {
 	            this.debug.log('Jessibuca', 'auto wasm [mse-> wasm] reset player and play');
-
 	            this._resetPlayer({
 	              useMSE: false,
 	              useWCS: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'auto wasm [mse-> wasm] reset player and play success');
@@ -13230,14 +12657,13 @@
 	            this.debug.log('Jessibuca', 'media source h265 not support and paused');
 	          }
 	        });
-	      }); //  media source full error
+	      });
 
+	      //  media source full error
 	      this.player.once(EVENTS_ERROR.mediaSourceFull, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'media source full');
-
 	          this._resetPlayer();
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'media source full and reset player and play success');
@@ -13246,14 +12672,12 @@
 	            this.debug.warn('Jessibuca', 'media source full and reset player and play error');
 	          });
 	        });
-	      }); // media source append buffer error
-
+	      });
+	      // media source append buffer error
 	      this.player.once(EVENTS_ERROR.mediaSourceAppendBufferError, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'media source append buffer error');
-
 	          this._resetPlayer();
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'media source append buffer error and reset player and play success');
@@ -13266,9 +12690,7 @@
 	      this.player.once(EVENTS_ERROR.mediaSourceBufferListLarge, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'media source buffer list large');
-
 	          this._resetPlayer();
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'media source buffer list large and reset player and play success');
@@ -13281,9 +12703,7 @@
 	      this.player.once(EVENTS_ERROR.mediaSourceAppendBufferEndTimeout, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'media source append buffer end timeout');
-
 	          this._resetPlayer();
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'media source append buffer end timeout and reset player and play success');
@@ -13297,11 +12717,9 @@
 	        this.pause().then(() => {
 	          if (this.player._opt.autoWasm) {
 	            this.debug.log('Jessibuca', 'auto wasm [mse-> wasm] reset player and play');
-
 	            this._resetPlayer({
 	              useMSE: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'auto wasm [mse-> wasm] reset player and play success');
@@ -13313,18 +12731,16 @@
 	            this.debug.log('Jessibuca', 'mse source buffer error and paused');
 	          }
 	        });
-	      }); //
-
+	      });
+	      //
 	      this.player.once(EVENTS_ERROR.webcodecsH265NotSupport, () => {
 	        this.pause().then(() => {
 	          if (this.player._opt.autoWasm) {
 	            this.debug.log('Jessibuca', 'auto wasm [wcs-> wasm] reset player and play');
-
 	            this._resetPlayer({
 	              useWCS: false,
 	              useMSE: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'auto wasm [wcs-> wasm] reset player and play success');
@@ -13336,16 +12752,14 @@
 	            this.debug.log('Jessibuca', 'webcodecs h265 not support and paused');
 	          }
 	        });
-	      }); // webcodecs
-
+	      });
+	      // webcodecs
 	      this.player.once(EVENTS_ERROR.webcodecsWidthOrHeightChange, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'webcodecs Width Or Height Change reset player and play');
-
 	          this._resetPlayer({
 	            useWCS: true
 	          });
-
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this.debug.log('Jessibuca', 'webcodecs Width Or Height Change reset player and play success');
@@ -13354,17 +12768,15 @@
 	            this.debug.warn('Jessibuca', 'webcodecs Width Or Height Change reset player and play error');
 	          });
 	        });
-	      }); // webcodecs
-
+	      });
+	      // webcodecs
 	      this.player.once(EVENTS_ERROR.webcodecsDecodeError, () => {
 	        this.pause().then(() => {
 	          if (this.player._opt.autoWasm) {
 	            this.debug.log('Jessibuca', 'webcodecs decode error reset player and play');
-
 	            this._resetPlayer({
 	              useWCS: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'webcodecs decode error  reset player and play success');
@@ -13376,17 +12788,15 @@
 	            this.debug.log('Jessibuca', 'webcodecs decode error and paused');
 	          }
 	        });
-	      }); // webcodecs
-
+	      });
+	      // webcodecs
 	      this.player.once(EVENTS_ERROR.webcodecsConfigureError, () => {
 	        this.pause().then(() => {
 	          if (this.player._opt.autoWasm) {
 	            this.debug.log('Jessibuca', 'webcodecs Configure error reset player and play');
-
 	            this._resetPlayer({
 	              useWCS: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'webcodecs Configure error  reset player and play success');
@@ -13398,17 +12808,15 @@
 	            this.debug.log('Jessibuca', 'webcodecs Configure error and paused');
 	          }
 	        });
-	      }); // wasm。
-
+	      });
+	      // wasm。
 	      this.player.once(EVENTS_ERROR.wasmDecodeError, () => {
 	        if (this.player._opt.wasmDecodeErrorReplay) {
 	          this.pause().then(() => {
 	            this.debug.log('Jessibuca', 'wasm decode error and reset player and play');
-
 	            this._resetPlayer({
 	              useWCS: false
 	            });
-
 	            this.play(url, options).then(() => {
 	              // resolve();
 	              this.debug.log('Jessibuca', 'wasm decode error and reset player and play success');
@@ -13424,32 +12832,35 @@
 	            this.debug.warn('Jessibuca', 'wasm decode error and paused error', e);
 	          });
 	        }
-	      }); // fetch error
-
+	      });
+	      // fetch error
 	      this.player.once(EVENTS_ERROR.fetchError, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'fetch error and pause play');
 	        }).catch(e => {
 	          this.debug.warn('Jessibuca', 'fetch error and pause play error', e);
 	        });
-	      }); //
+	      });
 
+	      //
 	      this.player.once(EVENTS_ERROR.websocketError, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'websocket Error and pause play');
 	        }).catch(e => {
 	          this.debug.warn('Jessibuca', 'websocket Error and pause play error', e);
 	        });
-	      }); //
+	      });
 
+	      //
 	      this.player.once(EVENTS.streamEnd, () => {
 	        this.pause().then(() => {
 	          this.debug.log('Jessibuca', 'stream End and pause play');
 	        }).catch(e => {
 	          this.debug.warn('Jessibuca', 'stream End and pause play error', e);
 	        });
-	      }); // 监听 delay timeout
+	      });
 
+	      // 监听 delay timeout
 	      this.player.on(EVENTS.delayTimeout, () => {
 	        if (this.player._opt.heartTimeoutReplay && (this._heartTimeoutReplayTimes < this.player._opt.heartTimeoutReplayTimes || this.player._opt.heartTimeoutReplayTimes === -1)) {
 	          this.debug.log('Jessibuca', `delay timeout replay time is ${this._heartTimeoutReplayTimes}`);
@@ -13457,11 +12868,13 @@
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this._heartTimeoutReplayTimes = 0;
-	          }).catch(() => {// reject();
+	          }).catch(() => {
+	            // reject();
 	          });
 	        }
-	      }); // 监听 loading timeout
+	      });
 
+	      // 监听 loading timeout
 	      this.player.on(EVENTS.loadingTimeout, () => {
 	        if (this.player._opt.loadingTimeoutReplay && (this._loadingTimeoutReplayTimes < this.player._opt.loadingTimeoutReplayTimes || this.player._opt.loadingTimeoutReplayTimes === -1)) {
 	          this.debug.log('Jessibuca', `loading timeout replay time is ${this._loadingTimeoutReplayTimes}`);
@@ -13469,11 +12882,11 @@
 	          this.play(url, options).then(() => {
 	            // resolve();
 	            this._loadingTimeoutReplayTimes = 0;
-	          }).catch(() => {// reject();
+	          }).catch(() => {
+	            // reject();
 	          });
 	        }
 	      });
-
 	      if (this.hasLoaded()) {
 	        this.player.play(url, options).then(() => {
 	          resolve();
@@ -13485,16 +12898,12 @@
 	        });
 	      } else {
 	        this.debug.log('Jessibuca', '_play ant waiting decoderWorkerInit');
-
 	        this._checkInitDecoderWorkerTimeout();
-
 	        this.player.once(EVENTS.decoderWorkerInit, () => {
 	          this._clearInitDecoderWorkerTimeout();
-
 	          if (this.isDestroyed()) {
 	            return;
 	          }
-
 	          this.debug.log('Jessibuca', '_play decoderWorkerInit success and play');
 	          this.player.play(url, options).then(() => {
 	            resolve();
@@ -13508,83 +12917,75 @@
 	      }
 	    });
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  resize() {
 	    this.player.resize();
 	  }
+
 	  /**
 	   *
 	   * @param time {number} s
 	   */
-
-
 	  setBufferTime(time) {
-	    time = Number(time); // s -> ms
-
+	    time = Number(time);
+	    // s -> ms
 	    this.player.updateOption({
 	      videoBuffer: time * 1000
-	    }); // update worker config
-
+	    });
+	    // update worker config
 	    this.player.decoderWorker && this.player.decoderWorker.updateWorkConfig({
 	      key: 'videoBuffer',
 	      value: time * 1000
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param deg {number}
 	   */
-
-
 	  setRotate(deg) {
 	    deg = parseInt(deg, 10);
 	    const list = [0, 90, 180, 270];
-
 	    if (this.player._opt.rotate === deg || list.indexOf(deg) === -1) {
 	      return;
 	    }
-
 	    this.player.updateOption({
 	      rotate: deg
 	    });
 	    this.resize();
 	  }
+
 	  /**
 	   *
 	   * @returns {boolean}
 	   */
-
-
 	  hasLoaded() {
 	    return this.player.loaded;
 	  }
+
 	  /**
 	   *
 	   */
-
-
 	  setKeepScreenOn() {
 	    this.player.updateOption({
 	      keepScreenOn: true
 	    });
 	  }
+
 	  /**
 	   *
 	   * @param flag {Boolean}
 	   */
-
-
 	  setFullscreen(flag) {
 	    const fullscreen = !!flag;
-
 	    if (this.player.fullscreen !== fullscreen) {
 	      this.player.fullscreen = fullscreen;
 	    }
 	  }
+
 	  /**
 	   *
 	   * @param filename {string}
@@ -13592,23 +12993,19 @@
 	   * @param quality {number}
 	   * @param type {string} download,base64,blob
 	   */
-
-
 	  screenshot(filename, format, quality, type) {
 	    if (!this.player.video) {
 	      return '';
 	    }
-
 	    return this.player.video.screenshot(filename, format, quality, type);
 	  }
+
 	  /**
 	   *
 	   * @param fileName {string}
 	   * @param fileType {string}
 	   * @returns {Promise<unknown>}
 	   */
-
-
 	  startRecord(fileName, fileType) {
 	    return new Promise((resolve, reject) => {
 	      if (this.player.playing) {
@@ -13619,90 +13016,73 @@
 	      }
 	    });
 	  }
-
 	  stopRecordAndSave() {
 	    if (this.player.recording) {
 	      this.player.stopRecordAndSave();
 	    }
 	  }
+
 	  /**
 	   *
 	   * @returns {Boolean}
 	   */
-
-
 	  isPlaying() {
 	    return this.player ? this.player.playing : false;
 	  }
+
 	  /**
 	   * 是否静音状态
 	   * @returns {Boolean}
 	   */
-
-
 	  isMute() {
 	    return this.player.audio ? this.player.audio.isMute : true;
 	  }
+
 	  /**
 	   * 是否在录制视频
 	   * @returns {*}
 	   */
-
-
 	  isRecording() {
 	    return this.player.recorder.recording;
 	  }
-
 	  _checkHasCreated(element) {
 	    if (!element) return false;
 	    const gbProV = getElementDataset(element, CONTAINER_DATA_SET_KEY);
-
 	    if (gbProV) {
 	      return true;
 	    }
-
 	    return false;
 	  }
-
 	  toggleControlBar(isShow) {
 	    if (this.isDestroyed()) {
 	      return;
 	    }
-
 	    if (this.player) {
 	      this.player.toggleControlBar(isShow);
 	    }
 	  }
-
 	  getControlBarShow() {
 	    if (this.isDestroyed()) {
 	      return false;
 	    }
-
 	    let result = false;
-
 	    if (this.player) {
 	      result = this.player.getControlBarShow();
 	    }
-
 	    return result;
 	  }
-
 	  _clearInitDecoderWorkerTimeout() {
 	    if (this.initDecoderWorkerTimeout) {
 	      clearTimeout(this.initDecoderWorkerTimeout);
 	      this.initDecoderWorkerTimeout = null;
 	    }
 	  }
-
 	  _checkInitDecoderWorkerTimeout() {
 	    this._clearInitDecoderWorkerTimeout();
-
 	    this.initDecoderWorkerTimeout = setTimeout(() => {
 	      this._handleInitDecoderWorkerTimeout();
 	    }, this.player._opt.loadingDecoderWorkerTimeout * 1000);
 	  }
-
 	  _handleInitDecoderWorkerTimeout() {
 	    this.pause().then(() => {
 	      this.debug.log('Jessibuca', 'init decoder worker timeout and pause play');
@@ -13710,16 +13090,12 @@
 	      this.debug.warn('Jessibuca', 'init decoder worker timeout and pause play error', e);
 	    });
 	  }
-
 	}
-
 	_defineProperty(Jessibuca, "ERROR", EVENTS_ERROR);
-
 	_defineProperty(Jessibuca, "TIMEOUT", {
 	  loadingTimeout: EVENTS.loadingTimeout,
 	  delayTimeout: EVENTS.delayTimeout
 	});
-
 	window.Jessibuca = Jessibuca;
 
 	return Jessibuca;
