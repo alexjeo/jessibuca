@@ -90,6 +90,7 @@
             <select id="isUseWebGPU" onchange="replay()">
                 <option value="webgl">webgl</option>
                 <option value="webgpu" selected>webgpu</option>
+                <option value="canvas">canvas</option>
             </select>
             <span id="supportWebgpu"></span>
         </div>
@@ -231,6 +232,7 @@
             ptzFocusShow: true,
             useCanvasRender: $renderDom.value === 'canvas',
             useWebGPU: $isUseWebGPU.value === 'webgpu',
+            useWebCanvas: $isUseWebGPU.value === 'canvas',
             demuxUseWorker: $demuxUseWorker.checked === true,
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             // audioEngine:"worklet",

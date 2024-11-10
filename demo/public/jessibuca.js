@@ -93,7 +93,7 @@
 	  webm: 'webm'
 	};
 	const CONTAINER_DATA_SET_KEY = 'jessibuca';
-	const VERSION = '"3.3.14"';
+	const VERSION = '"3.3.15"';
 
 	// default player options
 	const DEFAULT_PLAYER_OPTIONS = {
