@@ -3017,6 +3017,34 @@ https://blog.csdn.net/xyphf/article/details/105116223
 > 一般是视频的分辨率太过特殊导致的，比如 32:9 的分辨率。
 
 
+### Pro播放器出现“初始化解码Worker超时，initDecoderWorkerTimeout”异常
+
+是因为配置的`decoder`参数不对导致的。
+
+自查：
+1. 检查下network下面加载的`decoder解码器`资源是否有正确返回js内容
+
+<img src="/public/img/decoder/1.png">
+
+由图可以发现，js返回的内容是不对的，返回的格式也不对，返回成了html 内容了，不是js 内容
+
+2. 查看下`jessibuca-pro-demo.js`的网络地址是啥。
+
+<img src="/public/img/decoder/2.jpg">
+
+可以知道了，`jessibuca-pro-demo.js`的网络地址。
+
+3. 基于上面的地址，修改`decoder参数`配置就行了。
+
+> 需要设置的是网络地址，而不是项目中的地址。
+
+```js
+const jessibuca = new JessibucaPro({
+    decoder: '/static/jessibuca/decoder-pro.js',
+})
+```
+
+这样配置下就行了。
 
 ## 支持作者
 
