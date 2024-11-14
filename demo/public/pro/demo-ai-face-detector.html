@@ -53,8 +53,12 @@
             <div>
                 <span>边框宽度</span>
                 <input type="text" id="borderWidth" style="width:50px" value="2">
+                <span> | </span>
                 <span>边框颜色</span>
                 <input type="text" id="borderColor" style="width:80px" value="#0000FF">
+                <span> | </span>
+                <span>是否生成截图</span>
+                <input type="checkbox" id="aiFaceDetectEmitBase64" checked>
             </div>
             <button onclick="replay()">重播</button>
         </div>
@@ -74,6 +78,14 @@
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
         </div>
+        <div class="input input-wrap">
+            <span>截图：</span>
+            <img id="aiImage1" src="">
+            <img id="aiImage2" alt="">
+            <img id="aiImage3" alt="">
+            <img id="aiImage4" alt="">
+            <img id="aiImage5" alt="">
+        </div>
     </div>
 </div>
 
@@ -88,12 +100,16 @@
     var $aiFaceDetectShowRect = document.getElementById('aiFaceDetectShowRect');
     var $borderWidth = document.getElementById('borderWidth');
     var $borderColor = document.getElementById('borderColor');
+    var $aiFaceDetectEmitBase64 = document.getElementById('aiFaceDetectEmitBase64');
+
 
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
 
+    var currentIndex = 1;
     function create() {
+        clearImage();
         jessibuca = new JessibucaPro({
             container: $container,
             videoBuffer: 1, // 缓存时长
@@ -126,6 +142,7 @@
                 borderWidth: Number($borderWidth.value),
                 borderColor: $borderColor.value,
             },
+            aiFaceDetectEmitBase64: $aiFaceDetectEmitBase64.checked,
         });
 
         jessibuca.on(JessibucaPro.EVENTS.playFailedAndPaused, (error) => {
@@ -134,6 +151,17 @@
 
         jessibuca.on('aiFaceDetectorInfo', (msg) => {
             console.log('aiFaceDetectorInfo', msg);
+            (msg.list || []).forEach((item) => {
+                if (item.base64) {
+                    // 循环渲染图片
+                    var $img = document.getElementById('aiImage' + currentIndex);
+                    $img.src = item.base64;
+                    currentIndex++;
+                    if (currentIndex > 5) {
+                        currentIndex = 1;
+                    }
+                }
+            })
         })
 
 
@@ -144,6 +172,14 @@
 
 
     create();
+
+    function clearImage(){
+        currentIndex = 1
+        for (var i = 1; i <= 5; i++) {
+            var $img = document.getElementById('aiImage' + i);
+            $img.src = '';
+        }
+    }
 
     function play() {
         var href = $playHref.value;
