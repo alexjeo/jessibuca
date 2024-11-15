@@ -15,6 +15,8 @@
 
 ## MP4放进去以后一直加载不成功怎么办
 
+> 播放器会报：“cannot find moov or mdat box” 错误
+
 确认moov box 是否在mdat box之前
 
 > 其实就是按照fmp4格式封装就行了。
