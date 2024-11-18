@@ -917,11 +917,21 @@ https://blog.csdn.net/nbwgl/article/details/122652003
 
 ### Failed to constructor 'Worker': Script at 'file://xxxxxxx'
 
+#### 方案一：通过http协议启动
+
 别用`file`协议启动项目，`file`协议暂不支持`worker`。
 
 使用`http`协议启动，可以配合`nginx`或者`node` 启动。
 
-> pro 支持通过配置参数，只使用mse解码，不启动worker。 见
+> pro 支持通过配置参数，只使用mse解码，不启动worker。 见 demo-file.html
+
+
+#### 方案二：加载CDN资源
+
+> 可以通过加载CDN资源的方式，来解决这个问题。 见 `demo-cdn-http.html`, `demo-cdn-https.html` 里面加载的是官网的 cdn 文件。
+
+可以直接用file 协议打开这个 html 文件。
+
 
 #### node 启动(解决方案)
 
@@ -3045,6 +3055,16 @@ const jessibuca = new JessibucaPro({
 ```
 
 这样配置下就行了。
+
+
+### 同一个http的mp4视频流地址，直接在浏览器的地址输入栏中播放正常，但是在播放器中播放不了。
+
+> 这是由于播放的格式 mp4box.js 没法成功解析，要不然就是格式不是fmp4的，需要确保moov box在mdat box之前，这样播放器可以第一时间获取到moov box的信息，然后就可以播放了。
+
+解决方案：
+
+1. 检查下moov box在mdat box之前(检查下是否是fmp4格式)。
+2. 检查下mp4box.js 是否能够解析这种格式。
 
 ## 支持作者
 

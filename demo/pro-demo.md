@@ -529,6 +529,11 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 文件：`demo-file.html`
 
+或者可以通过加载cdn资源进行测试。
+
+文件 `demo-cdn-http.html`, `demo-cdn-https.html`
+
+
 
 ### 只使用硬解码（禁用软解码）
 ------
