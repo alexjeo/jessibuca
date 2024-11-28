@@ -406,6 +406,15 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/demo-zoom.html](http://jessibuca.monibuca.com/pro/demo-zoom.html)
 
+### 区域圈选获取坐标并截图显示
+------
+#### https
+[https://jessibuca.com/pro/demo-draw-rect.html](https://jessibuca.com/pro/demo-draw-rect.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/demo-draw-rect.html](http://jessibuca.monibuca.com/pro/demo-draw-rect.html)
+
+
 ### 水印（动态水印、幽灵水印）
 ------
 #### https
