@@ -3077,6 +3077,32 @@ const jessibuca = new JessibucaPro({
 
 正常的分辨率类似：`1920*1080`、`1280*720` 这种常规分辨率
 
+### 使用jessibuca 多级路由嵌套时 报错window.Jessibuca is not a constructor  在1级路由下播放器是正常运行的  多级路由就不行了
+
+> 原因是在配置 jessibuca.js 的资源引入的时候，路径配置不对导致的。一般这种情况都是通过相对路径配置的
+
+```html
+<script src="./jessibuca.js"></script>
+```
+
+> 要知道script 配置的是网络路径，不是项目里面的路径。
+
+解决方案： 改成绝对路径去引入
+
+```html
+<script src="/assets/jessibuca.js"></script>
+```
+
+> 这里的`/assets/jessibuca.js`是基于你访问url的路径去配置的。
+
+同理 `decoder` 参数配置也需要配置成网络路径。
+
+```js
+const jessibuca = new JessibucaPro({
+    decoder: '/static/decoder.js',
+})
+```
+
 
 ## 支持作者
 
