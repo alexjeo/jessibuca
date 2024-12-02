@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="origin-trial"
+          content="AhQB+uNRI7lww30oPK+0ZcGotIvuoHJL+NkkWOhqDdooY6+xnuiYmZli2SwlH1vkrKdB5WxMpsv5KRc/q9zFswoAAAB3eyJvcmlnaW4iOiJodHRwczovL2plc3NpYnVjYS5jb206NDQzIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNzA5ODU1OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Jessibuca Pro 点播 demo</title>
     <script src="./vconsole.js"></script>
@@ -42,29 +44,75 @@
             <div>
                 当前浏览器：
                 <span id="wasmSupport" style="color: green;display: none">支持WASM解码；</span>
-                <span id="simdSupport" style="color: green;display: none">支持WASM SIMD解码</span>
-                <span id="wasmNotSupport" style="color: red;display: none">不支持WASM解码</span>
+                <span id="simdSupport" style="color: green;display: none">支持WASM SIMD解码；</span>
+                <span id="simdMtSupport" style="color: green;display: none">支持WASM WASM(SIMD) 多线程解码；</span>
+                <span id="wasmNotSupport" style="color: red;display: none">不支持WASM解码；</span>
                 <span id="simdNotSupport"
-                      style="color: red;display: none">不支持WASM SIMD解码,会自动切换成wasm解码</span>
+                      style="color: red;display: none">不支持WASM SIMD解码,会自动切换成wasm解码；</span>
+                <span id="simdMtNotSupport" style="color: red;display: none">不支持WASM WASM(SIMD) 多线程解码；</span>
             </div>
         </div>
 
         <div class="input">
             <div>
-                解码器：
-                <input
-                    checked
-                    type="checkbox"
-                    id="useMSE"
-                /><span>MediaSource</span>
-                <input
-                    type="checkbox"
-                    id="useWCS"
-                /><span>Webcodec</span>
-                <input
-                    type="checkbox"
-                    id="useSIMD"
-                /><span>WASM(SIMD)</span>
+                <div>
+                    <span>硬解码：</span>
+                    <input
+                        type="checkbox"
+                        checked
+                        id="useMSE"
+                    /><span>MediaSource</span>
+                    <input
+                        type="checkbox"
+                        id="useWCS"
+                    /><span>Webcodec</span>
+                </div>
+                <div>
+                  <span>软解码：</span>
+                    <input
+                        type="checkbox"
+                        id="useWASM"
+                    /><span>WASM</span>
+                    <input
+                        type="checkbox"
+                        id="useSIMD"
+                    /><span>WASM(SIMD)</span>
+                    <input
+                        type="checkbox",
+                        id="isFFmpegSIMD"
+                        onclick="replay()"
+                    /><span>isSIMD(V2)</span>
+                    <input
+                        type="checkbox"
+                        checked
+                        id="useSIMDMThreading"
+                        onclick="replay()"
+                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    <span style="color: green">默认使用wasm解码器</span>
+                </div>
+            </div>
+        </div>
+        <div class="input">
+            <span>渲染标签：</span>
+            <select id="renderDom" onchange="replay()">
+                <option value="video" selected>video</option>
+                <option value="canvas">canvas</option>
+            </select>
+
+            <span>canvas渲染技术：</span>
+            <select id="isUseWebGPU" onchange="replay()">
+                <option value="webgl" selected>webgl</option>
+                <option value="webgpu">webgpu</option>
+            </select>
+            <span id="supportWebgpu"></span>
+        </div>
+        <div class="input">
+            <div>
+                <span>缓存时长：</span>
+                <input placeholder="单位：秒" type="text" id="videoBuffer" style="width: 50px" value="0.2">秒
+                <span>缓存延迟(延迟超过会触发丢帧)：</span>
+                <input placeholder="单位：秒" type="text" id="videoBufferDelay" style="width: 50px" value="1">秒
+                <button id="replay">重播</button>
             </div>
         </div>
         <div class="input">
@@ -124,7 +172,9 @@
     var $destroy = document.getElementById('destroy');
     var $useMSE = document.getElementById('useMSE');
     var $useSIMD = document.getElementById('useSIMD');
+    var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
     var $useWCS = document.getElementById('useWCS');
+    var $useWASM = document.getElementById('useWASM');
     var $playVodForward = document.getElementById('playVodForward');
     var $playVodBackword = document.getElementById('playVodBackword');
     var $isHls = document.getElementById('isHls');
@@ -145,6 +195,8 @@
             loadingText: "加载中",
             debug: true,
             debugLevel: 'debug',
+            isFFmpegSIMD: $isFFmpegSIMD.checked === true,
+            decoderErrorAutoWasm: false,
             timeout: 10000,
             // showPerformance: true,
             showBandwidth: showOperateBtns, // 显示网速
@@ -168,6 +220,7 @@
         jessibuca.on('playVodRateChange', function (rate) {
             console.log('playVodRateChange', rate);
         })
+
         $player.style.display = 'inline-block';
         $playVodPause.style.display = 'none';
         $destroy.style.display = 'none';
@@ -211,6 +264,7 @@
                 ],
                 useWCS: $useWCS.checked,
                 useMSE: $useMSE.checked,
+                useSIMD: $useSIMD.checked,
             });
         }
         isPlayVodPause = false;
@@ -230,6 +284,7 @@
         if (checked) {
             $useSIMD.checked = false
             $useWCS.checked = false
+            $useWASM.checked = false
         }
         replay();
     })
@@ -239,6 +294,8 @@
         if (checked) {
             $useMSE.checked = false
             $useWCS.checked = false
+            $useWASM.checked = false
+
         }
         replay();
     })
@@ -248,6 +305,34 @@
         if (checked) {
             $useMSE.checked = false
             $useSIMD.checked = false
+            $useWASM.checked = false
+        }
+        replay();
+    })
+
+    $useWASM.addEventListener('click', function () {
+        const checked = $useWASM.checked;
+        if (checked) {
+            $useMSE.checked = false
+            $useSIMD.checked = false
+            $useWCS.checked = false
+        }
+        replay();
+    })
+
+    $isHls.addEventListener('click', function () {
+        const checked = $isHls.checked;
+        if (checked) {
+            $isMP4.checked = false;
+        }
+
+        replay();
+    })
+
+    $isMP4.addEventListener('click', function () {
+        const checked = $isMP4.checked;
+        if (checked) {
+            $isHls.checked = false;
         }
         replay();
     })

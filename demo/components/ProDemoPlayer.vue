@@ -87,21 +87,23 @@
                 <input
                     type="checkbox"
                     v-model="useMSE"
-                    ref="vod"
                     @change="restartPlay('mse')"
                 /><span>MediaSource</span>
                 <input
                     type="checkbox"
                     v-model="useWCS"
-                    ref="vod"
                     @change="restartPlay('wcs')"
                 /><span>webcodecs</span>
                 <input
                     type="checkbox"
                     v-model="useSIMD"
-                    ref="vod"
                     @change="restartPlay('simd')"
                 /><span>SIMD</span>
+                <input
+                    type="checkbox"
+                    v-model="isFFmpegSIMD"
+                    @change="restartPlay('simd')"
+                /><span>isSIMD(V2)</span>
             </div>
             <div class="input">
                 <input
@@ -559,6 +561,7 @@ export default {
             useWCS: false,
             useMSE: false,
             useSIMD: true,
+            isFFmpegSIMD: true,
             useMT: true,
             useOffscreen: false,
             networkDelayTimeoutReplay: false,
@@ -647,6 +650,7 @@ export default {
                         decoderErrorAutoWasm: this.decoderErrorAutoWasm,
                         useMSE: this.useMSE,
                         useSIMD: this.useSIMD,
+                        isFFmpegSIMD: this.isFFmpegSIMD,
                         useMThreading: this.useMT,
                         wcsUseVideoRender: this.useWCS,
                         loadingIcon: true,

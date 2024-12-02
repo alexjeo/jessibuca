@@ -53,30 +53,42 @@
             </div>
         </div>
         <div class="input">
-            <div><input
-                type="checkbox"
-                checked
-                id="useMSE"
-            /><span>MediaSource</span>
-                <input
-                    type="checkbox"
-                    id="useWCS"
-                /><span>Webcodec</span>
-                <input
-                    type="checkbox"
-                    id="useWASM"
-                /><span>WASM</span>
-                <input
-                    type="checkbox"
-                    id="useSIMD"
-                /><span>WASM(SIMD)</span>
-                <input
-                    type="checkbox"
-                    checked
-                    id="useSIMDMThreading"
-                    onclick="replay()"
-                /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
-                <span style="color: green">默认使用wasm解码器</span>
+            <div>
+                <div>
+                    <span>硬解码：</span>
+                    <input
+                        type="checkbox"
+                        checked
+                        id="useMSE"
+                    /><span>MediaSource</span>
+                    <input
+                        type="checkbox"
+                        id="useWCS"
+                    /><span>Webcodec</span>
+                </div>
+                <div>
+                  <span>软解码：</span>
+                    <input
+                        type="checkbox"
+                        id="useWASM"
+                    /><span>WASM</span>
+                    <input
+                        type="checkbox"
+                        id="useSIMD"
+                    /><span>WASM(SIMD)</span>
+                    <input
+                        type="checkbox",
+                        id="isFFmpegSIMD"
+                        onclick="replay()"
+                    /><span>isSIMD(V2)</span>
+                    <input
+                        type="checkbox"
+                        checked
+                        id="useSIMDMThreading"
+                        onclick="replay()"
+                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    <span style="color: green">默认使用wasm解码器</span>
+                </div>
             </div>
         </div>
         <div class="input">
@@ -88,8 +100,8 @@
 
             <span>canvas渲染技术：</span>
             <select id="isUseWebGPU" onchange="replay()">
-                <option value="webgl">webgl</option>
-                <option value="webgpu" selected>webgpu</option>
+                <option value="webgl" selected>webgl</option>
+                <option value="webgpu">webgpu</option>
             </select>
             <span id="supportWebgpu"></span>
         </div>
@@ -172,6 +184,7 @@
     var $useMSE = document.getElementById('useMSE');
     var $useSIMD = document.getElementById('useSIMD');
     var $useWASM = document.getElementById('useWASM');
+    var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
     var $useWCS = document.getElementById('useWCS');
     var $videoBuffer = document.getElementById('videoBuffer');
     var $videoBufferDelay = document.getElementById('videoBufferDelay');
@@ -205,6 +218,7 @@
             useMSE: $useMSE.checked === true,
             decoderErrorAutoWasm: false,
             useSIMD: $useSIMD.checked === true,
+            isFFmpegSIMD: $isFFmpegSIMD.checked === true,
             useWCS: $useWCS.checked === true,
             useMThreading: $useSIMDMThreading.checked === true,
             showBandwidth: showOperateBtns, // 显示网速
