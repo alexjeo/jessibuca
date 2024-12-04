@@ -113,12 +113,24 @@
             </div>
         </div>
         <div class="input">
-            <input
-                checked
-                onclick="replay()"
-                type="checkbox"
-                id="isNakedFlow"
-            /><span>强制识别成裸流 <span style="color: red">(播放路径不是以.h264/.h265结尾的，建议勾选上)</span> </span>
+            <div>
+                <input
+                    checked
+                    onclick="replay()"
+                    type="checkbox"
+                    id="isNakedFlow"
+                /><span>强制识别成裸流 <span style="color: red">(播放路径不是以.h264/.h265结尾的，建议勾选上)</span> </span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                <input
+                    checked
+                    onclick="replay()"
+                    type="checkbox"
+                    id="debug"
+                />开启debug模式，可在控制台查看日志
+            </div>
         </div>
         <div class="input">
             <div>输入URL：</div>
@@ -158,6 +170,7 @@
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
+    var $debug = document.getElementById('debug');
 
     function create() {
         jessibuca = new JessibucaPro({
@@ -169,7 +182,7 @@
             isResize: false,
             text: "",
             loadingText: "加载中",
-            debug: true,
+            debug: $debug.checked === true,
             debugLevel: 'debug',
             useMSE: $useMSE.checked === true,
             useSIMD: $useSIMD.checked === true,
@@ -201,15 +214,15 @@
 
 
         jessibuca.on('ptz', (arrow) => {
-            console.log('ptz', arrow);
+            // console.log('ptz', arrow);
         })
 
         jessibuca.on('streamQualityChange', (value) => {
-            console.log('streamQualityChange', value);
+            // console.log('streamQualityChange', value);
         })
 
         jessibuca.on('timeUpdate', (value) => {
-            console.log('timeUpdate', value);
+            // console.log('timeUpdate', value);
         })
 
         jessibuca.on(JessibucaPro.EVENTS.playFailedAndPaused, (error) => {

@@ -178,10 +178,18 @@
         <div class="input">
             <span>canvas渲染技术：</span>
             <select id="isUseWebGPU" onchange="replay()">
-                <option value="webgl">webgl</option>
-                <option value="webgpu" selected>webgpu</option>
+                <option value="webgl" selected>webgl</option>
+                <option value="webgpu">webgpu</option>
             </select>
             <span id="supportWebgpu"></span>
+        </div>
+        <div class="input">
+            <span>是否检测流结束：</span>
+            <select id="playbackCheckStreamEnd" style="width: 50px">
+                <option value="true" selected>是</option>
+                <option value="false">否</option>
+            </select>
+            <span>(如果检测流结束，会抛出streamEnd异常，否的话，则会渲染完所有数据抛出playbackEnd事件)</span>
         </div>
         <div class="input">
             <div>
@@ -236,6 +244,8 @@
     var $useSIMD = document.getElementById('useSIMD');
     var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
     var $useWCS = document.getElementById('useWCS');
+    var $playbackCheckStreamEnd = document.getElementById('playbackCheckStreamEnd');
+
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -279,15 +289,10 @@
             forceNoOffscreen: forceNoOffscreen,
             isNotMute: false,
             playbackForwardMaxRateDecodeIFrame: onlyDecoderIFrame,
-            useWebGPU: $isUseWebGPU.value === 'webgpu' // 使用WebGPU
+            useWebGPU: $isUseWebGPU.value === 'webgpu', // 使用WebGPU
+            playbackCheckStreamEnd: $playbackCheckStreamEnd.value === 'true',
         },);
 
-        jessibuca.onLog = msg => console.error(msg);
-        jessibuca.onRecord = (status) => console.log('onRecord', status);
-        jessibuca.onPause = () => console.log('onPause');
-        jessibuca.onPlay = () => console.log('onPlay');
-        jessibuca.onFullscreen = msg => console.log('onFullscreen', msg);
-        jessibuca.onMute = msg => console.log('onMute', msg);
         $player.style.display = 'inline-block';
         $pause.style.display = 'none';
         $playbackPause.style.display = 'none';
@@ -301,6 +306,11 @@
         jessibuca.on('playbackPreRateChange', (rate) => {
             jessibuca.forward(rate);
         })
+
+        jessibuca.on('playbackEnd',()=>{
+            console.error('playbackEnd: 播放结束');
+        })
+
 
         jessibuca.on('playbackSeek', (data) => {
             jessibuca.setPlaybackStartTime(data.ts);

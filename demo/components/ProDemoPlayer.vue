@@ -842,7 +842,7 @@ export default {
                 this.performance = show;
             });
             jessibuca.on('buffer', (buffer) => {
-                console.log('buffer', buffer);
+                !this.isDebug && console.log('buffer', buffer);
             })
 
             jessibuca.on(JessibucaPro.EVENTS.stats, (stats) => {
