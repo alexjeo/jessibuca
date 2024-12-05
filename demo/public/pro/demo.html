@@ -282,10 +282,15 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href);
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
+            jessibuca.play(href).then(()=>{
+                console.log('play success');
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+            }).catch((error)=>{
+                jessibuca.showErrorMessageTips(error.toString());
+            });
+
         } else {
             jessibuca.showErrorMessageTips('播放地址不能为空');
         }

@@ -230,10 +230,13 @@
             if ($sm4Key.value !== '') {
                 jessibuca.setSm4CryptoKey($sm4Key.value);
             }
-            jessibuca.play(href);
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
+            jessibuca.play(href).then(()=>{
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+            }).catch((error) => {
+                jessibuca.showErrorMessageTips(error.toString());
+            });
         }
     }
 

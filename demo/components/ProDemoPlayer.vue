@@ -916,6 +916,7 @@ export default {
                     ElMessage.success('play success');
                 }).catch((err) => {
                     ElMessage.error('播放失败');
+                    this.jessibuca.showErrorMessageTips('播放异常：'+ err.toString());
                 });
                 this.playType = 'play'
                 this.loading = true;

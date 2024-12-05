@@ -279,7 +279,9 @@
         const href = playList[index++ % playList.length];
 
         if (href) {
-            jessibuca.play(href);
+            jessibuca.play(href).catch((error) => {
+                jessibuca.showErrorMessageTips(error.toString());
+            });
             $player.style.display = 'none';
             $pause.style.display = 'inline-block';
             $destroy.style.display = 'inline-block';

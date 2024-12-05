@@ -374,8 +374,8 @@
         if (href) {
             jessibuca.play(href).then(() => {
                 console.log('play success')
-            }).catch((e) => {
-                console.error('play error', e);
+            }).catch((error) => {
+                jessibuca.showErrorMessageTips(error.toString());
             });
             $player.style.display = 'none';
             $pause.style.display = 'inline-block';

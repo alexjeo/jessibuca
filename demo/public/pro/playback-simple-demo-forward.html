@@ -55,7 +55,7 @@
         <div class="input">
             <div>
                 <span><span style="color: red">TPS:动态(根据流):</span>播放器的倍率播放完全是根据服务器端推流的速率，如果服务器端推的是一倍率且动态码率的流，
-                播放器就按照一倍率动态码率渲染。<span style="color: green">例如 fps会15到30之间跳动。</span><span style="color: red">（画面会看着卡顿）</span>
+                播放器就按照一倍率动态码率渲染。<span style="color: green">例如 fps会15到30之间跳动。</span>
             </span>
             </div>
         </div>
@@ -118,36 +118,36 @@
         <div class="input">
             <div class="playbackForward">
                 <span>FPS设置：</span>
-                <select id="isUseFpsRender" style="width: 140px">
-                    <option value="false" selected>动态(根据流)</option>
-                    <option value="true">定频（本地设置）</option>
+                <select id="isUseFpsRender" disabled style="width: 140px">
+                    <option value="false">动态(根据流)</option>
+                    <option value="true" selected>定频（本地设置）</option>
                 </select>
             </div>
         </div>
         <div class="input">
             <span>是否解码前缓冲数据(定频生效)</span>
-            <select id="isCacheBeforeDecodeForFpsRender" style="width: 50px">
-                <option value="true">是</option>
-                <option value="false" selected>否</option>
+            <select id="isCacheBeforeDecodeForFpsRender" disabled style="width: 50px">
+                <option value="true" selected>是</option>
+                <option value="false">否</option>
             </select>
         </div>
         <div class="input">
             <span>是否显示操作按钮</span>
-            <select id="isShowControl" style="width: 50px">
+            <select id="isShowControl" disabled style="width: 50px">
                 <option value="true" selected>是</option>
                 <option value="false">否</option>
             </select>
         </div>
         <div class="input">
             <span>是否显示时间轴</span>
-            <select id="isShow24H" style="width: 50px">
+            <select id="isShow24H" disabled style="width: 50px">
                 <option value="true" selected>是</option>
                 <option value="false">否</option>
             </select>
         </div>
         <div class="input">
             <span>只解码I帧(<span style="color:red;">点击重播按钮生效</span>)</span>
-            <select id="onlyDecoderIFrame" style="width: 50px">
+            <select id="onlyDecoderIFrame" disabled style="width: 50px">
                 <option value="1">1倍</option>
                 <option value="2">2倍</option>
                 <option value="4" selected>4倍</option>
@@ -156,40 +156,32 @@
         </div>
         <div class="input">
             <div class="playback-fps" style="margin-left: 10px">
-                <span>FPS（定频(本地设置)生效）：</span><input style="width: 50px" type="text" id="playbackFps" value="25">帧
+                <span>FPS（定频(本地设置)生效）：</span><input disabled style="width: 50px" type="text" id="playbackFps" value="25">帧
             </div>
         </div>
         <div class="input">
             <div class="playback-fps" style="margin-left: 10px">
                 <span>不断流暂停是否清除缓存数据</span>
-                <select id="isPlaybackPauseClearCache" style="width: 50px">
-                    <option value="true" selected>是</option>
-                    <option value="false">否</option>
+                <select id="isPlaybackPauseClearCache" disabled style="width: 50px">
+                    <option value="true">是</option>
+                    <option value="false" selected>否</option>
                 </select>
             </div>
         </div>
         <div class="input">
             <span>ui是否使用playbackPause</span>
-            <select id="uiUsePlaybackPause" style="width: 50px">
-                <option value="true">是</option>
-                <option value="false" selected>否</option>
+            <select id="uiUsePlaybackPause" disabled style="width: 50px">
+                <option value="true" selected>是</option>
+                <option value="false" >否</option>
             </select>
         </div>
         <div class="input">
             <span>canvas渲染技术：</span>
-            <select id="isUseWebGPU" onchange="replay()">
+            <select id="isUseWebGPU" disabled onchange="replay()">
                 <option value="webgl" selected>webgl</option>
-                <option value="webgpu">webgpu</option>
+                <option value="webgpu" >webgpu</option>
             </select>
             <span id="supportWebgpu"></span>
-        </div>
-        <div class="input">
-            <span>是否检测流结束：</span>
-            <select id="playbackCheckStreamEnd" style="width: 50px">
-                <option value="true" selected>是</option>
-                <option value="false">否</option>
-            </select>
-            <span>(如果检测流结束，会抛出streamEnd异常，否的话，则会渲染完所有数据抛出playbackEnd事件)</span>
         </div>
         <div class="input">
             <div>
@@ -244,8 +236,6 @@
     var $useSIMD = document.getElementById('useSIMD');
     var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
     var $useWCS = document.getElementById('useWCS');
-    var $playbackCheckStreamEnd = document.getElementById('playbackCheckStreamEnd');
-
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -289,10 +279,15 @@
             forceNoOffscreen: forceNoOffscreen,
             isNotMute: false,
             playbackForwardMaxRateDecodeIFrame: onlyDecoderIFrame,
-            useWebGPU: $isUseWebGPU.value === 'webgpu', // 使用WebGPU
-            playbackCheckStreamEnd: $playbackCheckStreamEnd.value === 'true',
+            useWebGPU: $isUseWebGPU.value === 'webgpu' // 使用WebGPU
         },);
 
+        jessibuca.onLog = msg => console.error(msg);
+        jessibuca.onRecord = (status) => console.log('onRecord', status);
+        jessibuca.onPause = () => console.log('onPause');
+        jessibuca.onPlay = () => console.log('onPlay');
+        jessibuca.onFullscreen = msg => console.log('onFullscreen', msg);
+        jessibuca.onMute = msg => console.log('onMute', msg);
         $player.style.display = 'inline-block';
         $pause.style.display = 'none';
         $playbackPause.style.display = 'none';
@@ -306,11 +301,6 @@
         jessibuca.on('playbackPreRateChange', (rate) => {
             jessibuca.forward(rate);
         })
-
-        jessibuca.on('playbackEnd',()=>{
-            console.error('playbackEnd: 播放结束');
-        })
-
 
         jessibuca.on('playbackSeek', (data) => {
             jessibuca.setPlaybackStartTime(data.ts);
@@ -367,8 +357,6 @@
                 ],
                 useWCS: $useWCS.checked,
                 useMSE: $useMSE.checked,
-            }).catch((error) => {
-                jessibuca.showErrorMessageTips(error.toString());
             });
         }
         isPlaybackPause = false;

@@ -260,6 +260,8 @@
                 useWCS: $useWCS.checked,
                 useMSE: $useMSE.checked,
                 useSIMD: $useSIMD.checked,
+            }).catch((error) => {
+                jessibuca.showErrorMessageTips(error.toString());
             });
         }
         isPlayVodPause = false;
